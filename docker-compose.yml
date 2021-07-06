@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  frontend:
+    image: serverless:latest
+    volumes:
+      - ./src:/app
+    ports:
+     - "1993:1993"
+      
+volumes:
+  src:
