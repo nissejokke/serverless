@@ -8,4 +8,4 @@ WORKDIR /app
 # Prefer not to run as root.
 USER deno
 
-CMD ["run", "--allow-net", "--unstable", "main.ts"]
+CMD ["run", "--allow-net", "--unstable", "client.ts"]

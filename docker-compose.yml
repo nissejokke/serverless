@@ -1,11 +1,35 @@
 version: "3.9"
 services:
-  frontend:
-    image: serverless:latest
+  client:
+    image: serverless_client:latest
     volumes:
       - ./src:/app
     ports:
-     - "1993:1993"
-      
+      - "1993"
+    restart: always
+    deploy:
+      replicas: 2
+
+  router:
+   image: serverless_router:latest
+   volumes:
+     - ./src:/app
+   ports:
+     - "4000:4000"
+   restart: always
+   depends_on:
+     - client
+
+  # nginx load balancing: https://pspdfkit.com/blog/2018/how-to-use-docker-compose-to-run-multiple-instances-of-a-service-in-development/
+  # nginx:
+  #  image: nginx:latest
+  #  volumes:
+  #    - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #  depends_on:
+  #    - client
+  #  ports:
+  #    - "4000:4000"    
+
+
 volumes:
   src:
