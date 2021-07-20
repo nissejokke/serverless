@@ -10,5 +10,10 @@ for await (const req of server) {
   else {
     console.log("Req incomming");
     handler(req);
+    // const url = Deno.env.get('CLIENT_CODE_URL') as string;
+    // console.log("url=" + url);
+    // const client = await import(url);
+    // // console.log(client);
+    // client.default(req);
   }
 }

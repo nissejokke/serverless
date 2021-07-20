@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: serverless-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: serverless
+  template:
+    metadata:
+      labels:
+        app: serverless
+    spec:
+      containers:
+        - name: serverless-app
+          image: serverless_client:latest
+          imagePullPolicy: Never
+          #ports:
+          #  - containerPort: 1993
+          env:
+          - name: CLIENT_CODE_URL
+            value: https://raw.githubusercontent.com/nissejokke/serverless-functions/main/user-agent.ts
+          - name: CLIENT_CODE
+            value: |
+              import { ServerRequest } from "https://deno.land/std@0.100.0/http/server.ts";
+
+              export default async function handler(req: ServerRequest): Promise<void> {
+                  const body = `Your user-agent is!!!!:\n\n${req.headers.get(
+                      "user-agent",
+                    ) ?? "Unknown"}`;
+
+                    req.respond({
+                      body: body
+                    });
+              }
+          
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: serverless-service
+spec:
+  selector:
+    app: serverless
+  ports:
+    - port: 1993 # Default port for image
+  type: LoadBalancer
