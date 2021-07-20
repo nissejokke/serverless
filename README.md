@@ -12,7 +12,7 @@ docker build -f router.Dockerfile -t serverless_router:latest .
 
 # Running
 
-docker-compose up
+kubectl apply -f kubernetes.yaml
 
 curl http://localhost:4000
 
@@ -21,3 +21,10 @@ curl http://localhost:4000
 docker run -p 1993:1993 -v $(pwd)/src:/app serverless_client:latest
 
 curl http://localhost:1993
+
+# Useful commands
+
+eval $(minikube docker-env)
+minikube delete
+minikube start --vm=true
+minikube addons enable ingress
