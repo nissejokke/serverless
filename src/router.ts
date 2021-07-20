@@ -7,7 +7,7 @@ console.log(`Router listening on ${port}`);
 
 // deno-lint-ignore require-await
 async function getInstance(hostname: string): Promise<string> {
-  return `http://${Deno.env.get('SERVERLESS_SERVICE_SERVICE_HOST')}:${Deno.env.get('SERVERLESS_SERVICE_SERVICE_PORT')}`;
+  return `http://serverless-service:1993`;
 }
 
 for await (const conn of server) {

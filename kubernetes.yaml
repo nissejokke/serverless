@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: serverless-app
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: serverless
@@ -16,8 +16,6 @@ spec:
         - name: serverless-app
           image: serverless_client:latest
           imagePullPolicy: Never
-          #ports:
-          #  - containerPort: 1993
           env:
           - name: CLIENT_CODE_URL
             value: https://raw.githubusercontent.com/nissejokke/serverless-functions/main/user-agent.ts
@@ -26,7 +24,7 @@ spec:
               import { ServerRequest } from "https://deno.land/std@0.100.0/http/server.ts";
 
               export default async function handler(req: ServerRequest): Promise<void> {
-                  const body = `Your user-agent is:\n\n${req.headers.get(
+                  const body = `Your user-agent is (${Deno.env.get('HOSTNAME')}):\n\n${req.headers.get(
                       "user-agent",
                     ) ?? "Unknown"}`;
 
