@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: serverless-app
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: serverless
@@ -50,6 +50,40 @@ spec:
 
 ---
 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: serverless-router
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: serverless-router
+  template:
+    metadata:
+      labels:
+        app: serverless-router
+    spec:
+      containers:
+        - name: serverless-router
+          image: serverless_router:latest
+          imagePullPolicy: Never
+          
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: serverless-router
+spec:
+  selector:
+    app: serverless-router
+  ports:
+    - port: 4000 # Default port for image
+  #type: LoadBalancer
+
+---
+
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -64,6 +98,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: serverless-service
+            name: serverless-router
             port:
-              number: 1993
+              number: 4000
