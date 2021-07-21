@@ -3,31 +3,42 @@ const port = 4000;
 const server = Deno.listen({ port });
 console.log(`Router listening on ${port}`);
 
-// console.log(Deno.env.toObject());
+async function handle(conn: Deno.Conn) {
+  // This "upgrades" a network connection into an HTTP connection.
+  const httpConn = Deno.serveHttp(conn);
+  // Each request sent over the HTTP connection will be yielded as an async
+  // iterator from the HTTP connection.
+  for await (const requestEvent of httpConn) {     
 
-// deno-lint-ignore require-await
-async function getInstance(hostname: string): Promise<string> {
-  return `http://serverless-service:1993`;
-}
+    try {
+      const url = new URL(requestEvent.request.url);
+      const [, name, ...rest] = url.pathname.split('/');
+      const clientUrl = rest.join('/') + url.search;
 
-for await (const conn of server) {
-  // In order to not be blocking, we need to handle each connection individually
-  // in its own async function.
-  (async () => {
-    // This "upgrades" a network connection into an HTTP connection.
-    const httpConn = Deno.serveHttp(conn);
-    // Each request sent over the HTTP connection will be yielded as an async
-    // iterator from the HTTP connection.
-    for await (const requestEvent of httpConn) {     
-
-        const instance = await getInstance(requestEvent.request.headers.get('host')!);
-        console.log(instance);
-
-        const proxy = await fetch(instance, { headers: requestEvent.request.headers, method: requestEvent.request.method });
+      if (name) {
+        const proxyUrl = `http://${name}-service:1993/${clientUrl}`;
+        console.log('->', name + '/' + clientUrl);
+        const proxy = await fetch(proxyUrl, { headers: requestEvent.request.headers, method: requestEvent.request.method });
 
         const res = new Response(proxy.body);
         requestEvent.respondWith(res);
-
+      }
+      else {
+        console.log(`Not found:`, url.pathname + url.search);
+        const res = new Response('Not found. Missing function name', { status: 404 });
+        requestEvent.respondWith(res);
+      }
     }
-  })();
+    catch (err) {
+      console.error(`Request event error: ${err.message} ${err.status}`);
+      const res = new Response('Error', { status: 500 });
+      requestEvent.respondWith(res);
+    }
+  }
+}
+
+for await (const conn of server) {
+  handle(conn).catch(err => {
+    console.error(`Handle error: ${err.message}`);
+  });
 }
