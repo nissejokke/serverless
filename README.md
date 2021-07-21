@@ -35,10 +35,3 @@ Router receives request and determines which app to forward to. Each app is it's
 
     ./deploy-client.mjs cards examples/cards.ts
     curl http://{ip}/cards/draw
-
-## Running just client
-
-    docker run -p 1993:1993 -v $(pwd)/src:/app serverless_client:latest
-
-    curl http://localhost:1993
-
