@@ -5,6 +5,6 @@ const server = serve({ port: 1993 });
 console.log(`Client ${Deno.env.get('HOSTNAME')} listening on 1993`);
 
 for await (const req of server) {
-    console.log(`Req incoming ${Deno.env.get('HOSTNAME')}: ${req.url}`);
+    console.log(`[${new Date().toISOString()}] Req incoming ${Deno.env.get('HOSTNAME')}: ${req.url}`);
     handler(req);
 }

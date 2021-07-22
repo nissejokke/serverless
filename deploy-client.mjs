@@ -29,6 +29,11 @@ spec:
         - name: serverless-app
           image: serverless_client:latest
           imagePullPolicy: Never
+          resources:
+            limits:
+              cpu: 50m
+            requests:
+              cpu: 20m
           env:
           - name: CLIENT_CODE
             value: |
@@ -49,7 +54,11 @@ spec:
 
   await $`mkdir -p .deployments/`;
   await fs.writeFile(`.deployments/${name}.yaml`, yaml, 'utf-8');
-  await $`kubectl apply -f .deployments/${name}.yaml`;  
+  await $`kubectl apply -f .deployments/${name}.yaml`;
+  // await $`kubectl autoscale deployment ${name}-app --cpu-percent=50 --min=1 --max=2`;
+  // await $`kubectl get hpa`;
+  // not working:
+  // await $`kubectl rollout status -w deployments/${name}-app`;
 }
 catch (err) {
   console.error(err.message);

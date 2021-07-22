@@ -17,11 +17,9 @@ async function handle(conn: Deno.Conn) {
 
       if (name) {
         const proxyUrl = `http://${name}-service:1993/${clientUrl}`;
-        console.log('->', name + '/' + clientUrl);
+        console.log(`[${new Date().toISOString()}] -> ${name}/${clientUrl}`);
         const proxy = await fetch(proxyUrl, { headers: requestEvent.request.headers, method: requestEvent.request.method });
-
-        const res = new Response(proxy.body);
-        requestEvent.respondWith(res);
+        requestEvent.respondWith(proxy);
       }
       else {
         console.log(`Not found:`, url.pathname + url.search);
@@ -40,5 +38,6 @@ async function handle(conn: Deno.Conn) {
 for await (const conn of server) {
   handle(conn).catch(err => {
     console.error(`Handle error: ${err.message}`);
+    // Should a response be made here if an error occurs?
   });
 }

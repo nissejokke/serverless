@@ -16,6 +16,11 @@ spec:
         - name: serverless-router
           image: serverless_router:latest
           imagePullPolicy: Never
+          resources:
+            limits:
+              cpu: 150m
+            requests:
+              cpu: 100m
           
 ---
 

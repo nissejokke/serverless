@@ -12,7 +12,7 @@ Router receives request and determines which app to forward to. Each app is it's
 2. Request is proxied to useragent-service
 3. useragent-service uses one of more pods
 
-## Setup
+## Prerequisite
 
     minikube delete
     minikube start --vm=true
@@ -20,18 +20,31 @@ Router receives request and determines which app to forward to. Each app is it's
     eval $(minikube docker-env)
     sudo npm i -g zx
 
-## Building
+## Setup
 
+    kubectl apply -f metric-server.yaml
     docker build -f client.Dockerfile -t serverless_client:latest . 
     docker build -f router.Dockerfile -t serverless_router:latest . 
+    kubectl apply -f kubernetes.yaml
 
 ## Running
 
     minikube ip
-    kubectl apply -f kubernetes.yaml
 
     ./deploy-client.mjs useragent examples/useragent.ts
     curl http://{ip}/useragent
 
     ./deploy-client.mjs cards examples/cards.ts
     curl http://{ip}/cards/draw
+
+    # Simulates loads for auto scaling testing
+    ./deploy-client.mjs load examples/load.ts
+    curl http://{ip}/load
+
+# Auto scaling
+
+kubectl autoscale deployment load-app --cpu-percent=75 --min=1 --max=10
+
+# Before production
+
+Remove - --kubelet-insecure-tls in metric-server.yaml
