@@ -27,13 +27,12 @@ spec:
     spec:
       containers:
         - name: serverless-app
-          image: serverless_client:latest
-          imagePullPolicy: Never
+          image: nissejokke/serverless_client:latest
           resources:
             limits:
-              cpu: 50m
+              cpu: 250m
             requests:
-              cpu: 20m
+              cpu: 5m
           env:
           - name: CLIENT_CODE
             value: |

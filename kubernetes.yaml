@@ -14,13 +14,12 @@ spec:
     spec:
       containers:
         - name: serverless-router
-          image: serverless_router:latest
-          imagePullPolicy: Never
+          image: nissejokke/serverless_router:latest
           resources:
             limits:
-              cpu: 150m
+              cpu: 250m
             requests:
-              cpu: 100m
+              cpu: 10m
           
 ---
 
@@ -32,8 +31,7 @@ spec:
   selector:
     app: serverless-router
   ports:
-    - port: 4000 # Default port for image
-  #type: LoadBalancer
+    - port: 4000
 
 ---
 
@@ -43,6 +41,7 @@ metadata:
   name: main-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: nginx
 spec:
   rules:
   - http:

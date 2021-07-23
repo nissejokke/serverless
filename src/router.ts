@@ -28,8 +28,13 @@ async function handle(conn: Deno.Conn) {
       }
     }
     catch (err) {
+      const isConnectionRefusedError = err.message.includes('error trying to connect: tcp connect error: Connection refused');
       console.error(`Request event error: ${err.message} ${err.status}`);
-      const res = new Response('Error', { status: 500 });
+      let res: Response;
+      if (isConnectionRefusedError)
+        res = new Response('Service unavailable', { status: 503 });
+      else
+        res = new Response('Error', { status: 500 });
       requestEvent.respondWith(res);
     }
   }

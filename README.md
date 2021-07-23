@@ -22,10 +22,10 @@ Router receives request and determines which app to forward to. Each app is it's
 
 ## Setup
 
-    kubectl apply -f metric-server.yaml
     docker build -f client.Dockerfile -t serverless_client:latest . 
     docker build -f router.Dockerfile -t serverless_router:latest . 
     kubectl apply -f kubernetes.yaml
+    kubectl apply -f metric-server.yaml
 
 ## Running
 
@@ -48,3 +48,11 @@ kubectl autoscale deployment load-app --cpu-percent=75 --min=1 --max=10
 # Before production
 
 Remove - --kubelet-insecure-tls in metric-server.yaml
+
+# Resources
+
+https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-on-digitalocean-kubernetes-using-helm
+
+# Good to know
+
+Scaled coredns and cilium-operator to 1 replicas
