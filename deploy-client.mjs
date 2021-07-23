@@ -28,6 +28,7 @@ spec:
       containers:
         - name: serverless-app
           image: nissejokke/serverless_client:latest
+          imagePullPolicy: Always
           resources:
             limits:
               cpu: 250m

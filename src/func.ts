@@ -1,8 +1,3 @@
-import { ServerRequest } from "https://deno.land/std@0.100.0/http/server.ts";
-
-// deno-lint-ignore require-await
-export default async function handler(req: ServerRequest): Promise<void> {
-  req.respond({
-    body: "",
-  });
+// deno-lint-ignore no-unused-vars
+export default async function handler({ req, conn }: { req: Deno.RequestEvent, conn?: Deno.Conn }): Promise<void> {
 }

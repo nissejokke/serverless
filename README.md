@@ -31,15 +31,21 @@ Router receives request and determines which app to forward to. Each app is it's
 
     minikube ip
 
+    # Prints user agent
     ./deploy-client.mjs useragent examples/useragent.ts
     curl http://{ip}/useragent
 
+    # Draws a random playing card
     ./deploy-client.mjs cards examples/cards.ts
     curl http://{ip}/cards/draw
 
     # Simulates loads for auto scaling testing
     ./deploy-client.mjs load examples/load.ts
     curl http://{ip}/load
+
+    # Http framework test
+    ./deploy-client.mjs http examples/http.ts
+    curl http://{ip}/http/book/1
 
 # Auto scaling
 
