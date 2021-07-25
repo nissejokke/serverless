@@ -20,8 +20,19 @@ async function handle(conn: Deno.Conn) {
       else if (name) {
         const proxyUrl = `http://${name}-service:1993/${clientUrl}`;
         console.log(`[${new Date().toISOString()}] -> ${name}/${clientUrl}`);
-        const proxy = await fetch(proxyUrl, { headers: event.request.headers, method: event.request.method });
-        event.respondWith(proxy);
+        let proxyRes: Response | null = null;
+        let attempt = 0;
+        let clientIsInStartup = false;
+        do {
+          try {
+            if (clientIsInStartup) await new Promise(r => setTimeout(r, 1000));
+            proxyRes = await fetch(proxyUrl, { headers: event.request.headers, method: event.request.method });
+          }
+          catch (err) {
+            clientIsInStartup = err.message.includes('Connection reset by peer (os error 104)');
+          }
+        } while (clientIsInStartup && ++attempt < 10);
+        event.respondWith(proxyRes!);
       }
       else {
         console.log(`Not found:`, url.pathname + url.search);
