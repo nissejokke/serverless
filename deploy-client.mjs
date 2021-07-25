@@ -34,6 +34,24 @@ spec:
               cpu: 250m
             requests:
               cpu: 5m
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 1993
+              httpHeaders:
+              - name: User-Agent
+                value: Probe
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 1993
+              httpHeaders:
+              - name: User-Agent
+                value: Probe
+            failureThreshold: 30
+            periodSeconds: 10
           env:
           - name: CLIENT_CODE
             value: |

@@ -20,6 +20,24 @@ spec:
               cpu: 250m
             requests:
               cpu: 10m
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 1993
+              httpHeaders:
+              - name: User-Agent
+                value: Probe
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 1993
+              httpHeaders:
+              - name: User-Agent
+                value: Probe
+            failureThreshold: 30
+            periodSeconds: 10
           
 ---
 
@@ -35,15 +53,79 @@ spec:
 
 ---
 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: serverless-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: serverless-manager
+  template:
+    metadata:
+      labels:
+        app: serverless-manager
+    spec:
+      containers:
+        - name: serverless-manager
+          image: nissejokke/serverless_manager:latest
+          resources:
+            limits:
+              cpu: 250m
+            requests:
+              cpu: 10m
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 4001
+              httpHeaders:
+              - name: User-Agent
+                value: Probe
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 4001
+              httpHeaders:
+              - name: User-Agent
+                value: Probe
+            failureThreshold: 30
+            periodSeconds: 10
+          
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: serverless-manager
+spec:
+  selector:
+    app: serverless-manager
+  ports:
+    - port: 4001
+
+---
+
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: main-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
     kubernetes.io/ingress.class: nginx
 spec:
   rules:
+  - http:
+      paths:
+      - path: /_manager(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: serverless-manager
+            port:
+              number: 4001
   - http:
       paths:
       - path: /

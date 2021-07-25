@@ -8,23 +8,25 @@ async function handle(conn: Deno.Conn) {
   const httpConn = Deno.serveHttp(conn);
   // Each request sent over the HTTP connection will be yielded as an async
   // iterator from the HTTP connection.
-  for await (const requestEvent of httpConn) {     
+  for await (const event of httpConn) {     
 
     try {
-      const url = new URL(requestEvent.request.url);
+      const url = new URL(event.request.url);
       const [, name, ...rest] = url.pathname.split('/');
       const clientUrl = rest.join('/') + url.search;
 
-      if (name) {
+      if (event.request.headers.get('user-agent') === 'Probe' && new URL(event.request.url).pathname === '/healthz')
+        event.respondWith(new Response());
+      else if (name) {
         const proxyUrl = `http://${name}-service:1993/${clientUrl}`;
         console.log(`[${new Date().toISOString()}] -> ${name}/${clientUrl}`);
-        const proxy = await fetch(proxyUrl, { headers: requestEvent.request.headers, method: requestEvent.request.method });
-        requestEvent.respondWith(proxy);
+        const proxy = await fetch(proxyUrl, { headers: event.request.headers, method: event.request.method });
+        event.respondWith(proxy);
       }
       else {
         console.log(`Not found:`, url.pathname + url.search);
         const res = new Response('Not found. Missing function name', { status: 404 });
-        requestEvent.respondWith(res);
+        event.respondWith(res);
       }
     }
     catch (err) {
@@ -35,7 +37,7 @@ async function handle(conn: Deno.Conn) {
         res = new Response('Service unavailable', { status: 503 });
       else
         res = new Response('Error', { status: 500 });
-      requestEvent.respondWith(res);
+      event.respondWith(res);
     }
   }
 }
