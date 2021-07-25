@@ -23,7 +23,7 @@ spec:
           livenessProbe:
             httpGet:
               path: /healthz
-              port: 1993
+              port: 4000
               httpHeaders:
               - name: User-Agent
                 value: Probe
@@ -32,7 +32,7 @@ spec:
           startupProbe:
             httpGet:
               path: /healthz
-              port: 1993
+              port: 4000
               httpHeaders:
               - name: User-Agent
                 value: Probe
@@ -93,6 +93,8 @@ spec:
                 value: Probe
             failureThreshold: 30
             periodSeconds: 10
+          # envs set manually:
+          # KUBE_CERTIFICATE_AUTH, KUBE_SERVER, KUBE_DOCTL_AUTH, DIGITALOCEAN_ACCESS_TOKEN
           
 ---
 
@@ -128,7 +130,7 @@ spec:
               number: 4001
   - http:
       paths:
-      - path: /
+      - path: /()(.*)
         pathType: Prefix
         backend:
           service:

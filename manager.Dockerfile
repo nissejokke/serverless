@@ -11,14 +11,23 @@ RUN apt-get update && \
     curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list && \
     apt-get update && \
-    apt-get install -y kubectl
+    apt-get install -y kubectl && \
+    apt-get install -y wget tar && \
+    cd ~ && \
+    wget https://github.com/digitalocean/doctl/releases/download/v1.62.0/doctl-1.62.0-linux-amd64.tar.gz && \
+    tar xf ~/doctl-1.62.0-linux-amd64.tar.gz && \
+    mv ~/doctl /usr/local/bin
 
 # Copy code and custom entry point
-COPY src/manager.ts /app/
+COPY src/manager.ts manager-entry.sh /app/
 RUN chown -R deno:deno /app
 
 # Prefer not to run as root.
+RUN mkhomedir_helper deno
+COPY kube_config /home/deno/.kube/config
+RUN chown -R deno:deno /home/deno
 USER deno
 RUN deno cache --unstable manager.ts
+ENTRYPOINT ["/app/manager-entry.sh"]
 
 CMD ["run", "--allow-all", "--unstable", "manager.ts"]
