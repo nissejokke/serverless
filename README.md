@@ -18,7 +18,6 @@ Router receives request and determines which app to forward to. Each app is it's
     minikube start --vm=true
     minikube addons enable ingress
     eval $(minikube docker-env)
-    sudo npm i -g zx
 
 ## Setup
 
@@ -29,23 +28,26 @@ Router receives request and determines which app to forward to. Each app is it's
 
 ## Running
 
-    minikube ip
+    # minikube ip
+    # set host kube in hosts
 
     # Prints user agent
-    ./deploy-client.sh useragent examples/useragent.ts
-    curl http://{ip}/useragent
+    curl --data-binary @examples/useragent.ts -X POST http://kube/_manager/func\?name\=useragent
+    curl http://kube/useragent
+
+    # deploy-client.sh for simplicity, uses curl like above
 
     # Draws a random playing card
     ./deploy-client.sh cards examples/cards.ts
-    curl http://{ip}/cards/draw
+    curl http://kube/cards/draw
 
     # Simulates loads for auto scaling testing
     ./deploy-client.sh load examples/load.ts
-    curl http://{ip}/load
+    curl http://kube/load
 
     # Http framework test
     ./deploy-client.sh http examples/http.ts
-    curl http://{ip}/http/book/1
+    curl http://kube/http/book/1
 
 # Auto scaling
 
@@ -61,4 +63,5 @@ https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-
 
 # Good to know
 
-Scaled coredns and cilium-operator to 1 replicas
+Scaled coredns and cilium-operator from 2 to 1 replicas
+Also lowered cpu request

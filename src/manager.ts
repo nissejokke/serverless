@@ -14,6 +14,7 @@ router
     if (!name) throw new Error('name required');
     if (!code) throw new Error('code required');
     if (!/^[\w\d_-]+$/.test(name)) throw new Error('name can only contain alpha numerical, dash and underscore');
+    if (['_manager'].includes(name.toLowerCase())) throw new Error('reserved name');
     
     const codeTabbed = code.split('\n').join('\n' + '              ');
 
