@@ -24,7 +24,7 @@ RUN chown -R deno:deno /app
 
 # Prefer not to run as root.
 RUN mkhomedir_helper deno
-COPY kube_config /home/deno/.kube/config
+RUN mkdir -p /home/deno/.kube
 RUN chown -R deno:deno /home/deno
 USER deno
 RUN deno cache --unstable manager.ts
