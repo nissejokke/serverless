@@ -66,7 +66,27 @@ router
     validateFuncName(name);
     if (!code) throw new Error('code required');
     if (['_manager'].includes(name.toLowerCase())) throw new Error('reserved name');
-    
+
+    // code validation disabled for now, it might be a problem that the manager downloads all kinds of code from everywhere
+
+    // validate code by compiling
+    // console.log('Saving code in temp file');
+    // console.log(code);
+    // const codeFile = await Deno.makeTempFile() + '.ts';
+    // await Deno.writeFile(codeFile, new TextEncoder().encode(code), { create: true, append: false });
+    // console.log('Compiling');
+
+    // const { diagnostics } = await Deno.emit(codeFile, { compilerOptions: { lib: ["deno.unstable", "deno.window"] } });
+    // Deno.remove(codeFile);
+
+    // if (diagnostics.length) {
+    //   const diagnosticsResult = Deno.formatDiagnostics(diagnostics);
+    //   console.warn('Compilation failed:');
+    //   console.warn(diagnosticsResult);
+    //   // deno-lint-ignore no-control-regex
+    //   throw new Error(`Compilation failed: ${diagnosticsResult.replace(/\x1b\[[0-9;]*m/g, '')}`);
+    // }
+
     const codeTabbed = code.split('\n').join('\n' + '              ');
 
     const yaml = `apiVersion: apps/v1
@@ -136,12 +156,12 @@ metadata:
   namespace: default
 spec:
   minReplicas: 1
-  maxReplicas: 2
+  maxReplicas: 5
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
     name: ${name}-app
-  targetCPUUtilizationPercentage: 50
+  targetCPUUtilizationPercentage: 65
 `;
 
     const file = await Deno.makeTempFile();

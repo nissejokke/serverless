@@ -6,7 +6,7 @@ export default async function handler({ req }: { req: Deno.RequestEvent, conn?: 
 
   req.respondWith(
     new Response(body, {
-      status: 200,
+      status: 200
     })
   );
 }

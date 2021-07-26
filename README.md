@@ -1,16 +1,21 @@
-# Serverless hosting experiment (work in progress)
+# Serverless deno function hosting experiment (work in progress)
 
 Serverless hosting of Deno typescript code running in docker using kubernetes.
+
+- Deploys function in under 20s
+- Runs isolated in docker
+- Auto scales depending on load
+- Http apies to manage functions
 
 ## How it works
 
 Request -> Router -> Client 
 
-Router receives request and determines which app to forward to. Each app is it's own kubernetes service which can have multiple pods depending on load.
+Router receives request and determines which app to forward to. Each app has it's own kubernetes service which can have multiple pods depending on load. Function code is injected as parameter to pre built docker image.
 
-1. Request url is mapped to client app name. For example: /useragent is mapped to kubernetes service useragent-service (which pipes to useragent-app pods)
+1. Router maps request to client app name. For example: /useragent is mapped to kubernetes service useragent-service (which pipes to useragent-app pods)
 2. Request is proxied to useragent-service
-3. useragent-service uses one of more pods
+3. useragent-service uses one of more pods depending on load
 
 ## Prerequisite
 
@@ -26,30 +31,41 @@ Router receives request and determines which app to forward to. Each app is it's
     kubectl apply -f kubernetes.yaml
     kubectl apply -f metric-server.yaml
 
-## Running
-
     # minikube ip
-    # set host kube in hosts
+    # host kube in hosts in following examples
 
-    # Prints user agent
+## Creating and running functions
+
+    # Creates a function named "useragent" with code from examples/useragent.ts
     curl --data-binary @examples/useragent.ts -X POST http://kube/_manager/func\?name\=useragent
+
+    # Call with:
     curl http://kube/useragent
 
-    # deploy-client.sh for simplicity, uses curl like above
-
     # Draws a random playing card
-    ./deploy-client.sh cards examples/cards.ts
+    curl --data-binary @examples/cards.ts -X POST http://kube/_manager/func\?name\=cards
+
+    # Call with
     curl http://kube/cards/draw
 
     # Simulates loads for auto scaling testing
-    ./deploy-client.sh load examples/load.ts
+    curl --data-binary @examples/load.ts -X POST http://kube/_manager/func\?name\=load
     curl http://kube/load
 
     # Http framework test
-    ./deploy-client.sh http examples/http.ts
+    curl --data-binary @examples/http.ts -X POST http://kube/_manager/func\?name\=http
     curl http://kube/http/book/1
 
+## Deleting functions
+
+    curl -X DELETE http://kube/_manager/func/useragent
+    curl -X DELETE http://kube/_manager/func/cards
+    curl -X DELETE http://kube/_manager/func/load
+    curl -X DELETE http://kube/_manager/func/http
+
 # Auto scaling
+
+Auto scaling rules are created with each function. Create manuall using:
 
 kubectl autoscale deployment load-app --cpu-percent=75 --min=1 --max=10
 

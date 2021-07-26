@@ -3,7 +3,7 @@ import { Application, Router } from "https://deno.land/x/oak/mod.ts";
 const app = new Application();
 const router = new Router();
 
-const books = new Map<string, any>();
+const books = new Map<string, Record<string, string>>();
 books.set("1", {
   id: "1",
   title: "The Hound of the Baskervilles",
