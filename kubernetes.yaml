@@ -121,7 +121,7 @@ spec:
   rules:
   - http:
       paths:
-      - path: /_manager(/|$)(.*)
+      - path: /()(.*)
         pathType: Prefix
         backend:
           service:
@@ -130,7 +130,7 @@ spec:
               number: 4001
   - http:
       paths:
-      - path: /()(.*)
+      - path: /fn(/|$)(.*)
         pathType: Prefix
         backend:
           service:

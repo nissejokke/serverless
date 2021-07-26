@@ -4,12 +4,7 @@ const server = Deno.listen({ port });
 console.log(`Router listening on ${port}`);
 
 async function handle(conn: Deno.Conn) {
-  // This "upgrades" a network connection into an HTTP connection.
-  const httpConn = Deno.serveHttp(conn);
-  // Each request sent over the HTTP connection will be yielded as an async
-  // iterator from the HTTP connection.
-  for await (const event of httpConn) {     
-
+  for await (const event of Deno.serveHttp(conn)) {
     try {
       const url = new URL(event.request.url);
       const [, name, ...rest] = url.pathname.split('/');
@@ -36,7 +31,7 @@ async function handle(conn: Deno.Conn) {
             clientIsInStartup = err.message.includes('Connection reset by peer (os error 104)');
             if (!clientIsInStartup) throw err;
           }
-        } while (clientIsInStartup && ++attempt < 10);
+        } while (clientIsInStartup && ++attempt < 20);
         event.respondWith(proxyRes!);
       }
       else {
