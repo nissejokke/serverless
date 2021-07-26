@@ -25,11 +25,16 @@ async function handle(conn: Deno.Conn) {
         let clientIsInStartup = false;
         do {
           try {
-            if (clientIsInStartup) await new Promise(r => setTimeout(r, 1000));
+            if (clientIsInStartup) {
+              console.log('Chill for a second');
+              await new Promise(r => setTimeout(r, 1000));
+            }
             proxyRes = await fetch(proxyUrl, { headers: event.request.headers, method: event.request.method });
           }
           catch (err) {
+            console.error('Proxy error:', err.message);
             clientIsInStartup = err.message.includes('Connection reset by peer (os error 104)');
+            if (!clientIsInStartup) throw err;
           }
         } while (clientIsInStartup && ++attempt < 10);
         event.respondWith(proxyRes!);
@@ -42,10 +47,14 @@ async function handle(conn: Deno.Conn) {
     }
     catch (err) {
       const isConnectionRefusedError = err.message.includes('error trying to connect: tcp connect error: Connection refused');
+      const isUnknownService = err.message.includes('dns error: failed to lookup address information');
+
       console.error(`Request event error: ${err.message} ${err.status}`);
       let res: Response;
       if (isConnectionRefusedError)
         res = new Response('Service unavailable', { status: 503 });
+      else if (isUnknownService)
+        res = new Response('Not found', { status: 404 });
       else
         res = new Response('Error', { status: 500 });
       event.respondWith(res);
