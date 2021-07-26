@@ -1,13 +1,15 @@
 import { Application, Router } from "https://deno.land/x/oak@v8.0.0/mod.ts";
 import { funcCreate } from "./func_create.ts";
 import { funcDelete } from "./func_delete.ts";
+import { join, fromFileUrl, dirname } from "https://deno.land/std@0.103.0/path/mod.ts";
 
 const app = new Application();
 const router = new Router()
 
 router
-  .get("/", (ctx) => {
-    ctx.response.body = "Manage functions";
+  .get("/", async (ctx) => {
+    const path = join(dirname(fromFileUrl(import.meta.url)), 'index.html');
+    ctx.response.body = new TextDecoder('utf-8').decode(await Deno.readFile(path));
   })
   .delete("/func/:name", funcDelete)
   .post("/func", funcCreate);

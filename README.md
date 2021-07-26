@@ -26,8 +26,10 @@ Router receives request and determines which app to forward to. Each app has it'
 
 ## Setup
 
-    docker build -f client.Dockerfile -t serverless_client:latest . 
-    docker build -f router.Dockerfile -t serverless_router:latest . 
+    docker build -f client.Dockerfile -t nissejokke/serverless_client:latest . && docker push nissejokke/serverless_client:latest
+    docker build -f router.Dockerfile -t nissejokke/serverless_router:latest . && docker push nissejokke/serverless_router:latest
+    docker build -f manager.Dockerfile -t nissejokke/serverless_manager:latest . && docker push nissejokke/serverless_manager:latest
+
     kubectl apply -f kubernetes.yaml
     kubectl apply -f metric-server.yaml
 
