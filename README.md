@@ -44,10 +44,10 @@ Router receives request and determines which app to forward to. Each app has it'
     # Call with:
     curl http://kube/fn/useragent
 
-    # Draws a random playing card
+    # Cards function
     curl --data-binary @examples/cards.ts -X POST http://kube/func\?name\=cards
 
-    # Call with
+    # Draws a random playing card
     curl http://kube/fn/cards/draw
 
     # Simulates loads for auto scaling testing
