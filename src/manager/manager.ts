@@ -7,7 +7,10 @@ const app = new Application();
 const router = new Router()
 
 router
-  .get("/", async (ctx) => {
+  .get("/", (ctx) => {
+    ctx.response.body = 'svrless';
+  })
+  .get("/about", async (ctx) => {
     const path = join(dirname(fromFileUrl(import.meta.url)), 'index.html');
     ctx.response.body = new TextDecoder('utf-8').decode(await Deno.readFile(path));
   })
@@ -36,7 +39,7 @@ async function handler({ req }: { req: Deno.RequestEvent, conn?: Deno.Conn }): P
 const port = 4001;
 
 const server = Deno.listen({ port });
-console.log(`Client listening on ${port}`);
+console.log(`Manager listening on ${port}`);
 
 async function handle(conn: Deno.Conn) {
   for await (const event of Deno.serveHttp(conn)) {
