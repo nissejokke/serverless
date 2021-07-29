@@ -1,8 +1,10 @@
 
 import { parse } from "https://deno.land/std@v0.103.0/flags/mod.ts";
+import { join, fromFileUrl, dirname } from "https://deno.land/std@0.103.0/path/mod.ts";
+import { open } from "https://deno.land/x/opener@v1.0.1/mod.ts";
 
 const args = parse(Deno.args);
-const [command, subcommand] = args._;
+const [command, subcommand, ...restCommands] = args._;
 const cliName = 'svrless';
 
 switch (command) {
@@ -35,11 +37,37 @@ switch (command) {
                     console.log(`Available flags:\n  --name        Name of function to delete`);
                 }
                 break;
+            case 'run': {
+                const path = restCommands[0] as string;
+                if (path) {
+                    const dir = await Deno.makeTempDir();
+                    const clientPath = join(dirname(fromFileUrl(import.meta.url)), '../client.ts');
+                    await Deno.copyFile(clientPath, join(dir, 'client.ts'));
+                    await Deno.copyFile(path, join(dir, 'func.ts'));
+                    const process = Deno.run({
+                        cmd: ['deno', 'run', '--allow-net', '--allow-env', '--allow-read=/temp', '--allow-write=/temp', '--unstable', 'client.ts'],
+                        cwd: dir
+                    });
+                    
+                    await new Promise(r => setTimeout(r, 1000));
+                    if (args.open)
+                        open('http://localhost:1993');
+                    await process.status();
+                }
+                else {
+                    console.log(`\`${cliName} run\` is for running and testing function locally\n`);
+                    console.log(`Usage: \n  ${cliName} func run [function code file path] [flags]\n`);
+                    console.log(`Available flags:`)
+                    console.log(`\n  --open        Open url in browser`);
+                }
+                break;
+            }
             default:
                 console.log(`The commands under \`${cliName} func\` are for handling functions\n\nUsage: ${cliName} func [command]`);
                 console.log(`\nAvailable commands:`);
                 console.log(`  create`);
                 console.log(`  delete`);
+                console.log(`  run`);
         }
         break;
     }
