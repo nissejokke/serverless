@@ -5,9 +5,38 @@ Serverless hosting of Deno typescript code running in docker using kubernetes.
 - Deploys function in under 20s
 - Runs isolated in docker
 - Auto scales depending on load
-- Http apies to manage functions
+- Cli and http apies to manage functions
 
-## How it works
+## Install cli
+    deno compile -A https://github.com/nissejokke/serverless/blob/master/src/cli/svrless.ts
+
+## Create function
+Create file named useragent.ts with the following contents (already exists in examples/useragent.ts):</p>
+
+    export default async function handler({ req }: { req: Deno.RequestEvent, conn?: Deno.Conn }): Promise<void> {
+        const body = `Your user-agent is:\n\n${
+            req.request.headers.get("user-agent") ?? "Unknown"
+        }`;
+
+        req.respondWith(new Response(body, { status: 200 }));
+    }
+
+## Test function
+    ./svrless func run useragent.ts --open
+
+## Deploy function
+
+    ./svrless func create --name myfunction --path useragent.ts
+
+## Call function</h2>
+
+    http://134.209.132.169/fn/myfunction
+
+## Remove function
+
+    ./svrless func create func delete --name myfunction
+    
+# Under the hood
 
 Request -> Router -> Client 
 
@@ -65,26 +94,26 @@ Router receives request and determines which app to forward to. Each app has it'
     curl -X DELETE http://kube/func/load
     curl -X DELETE http://kube/func/http
 
-# Auto scaling
+## Auto scaling
 
 Auto scaling rules are created with each function. Create manuall using:
 
 kubectl autoscale deployment load-app --cpu-percent=75 --min=1 --max=10
 
-# Before production
+## Before production
 
 Remove - --kubelet-insecure-tls in metric-server.yaml
 
-# Resources
+## Resources
 
 https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-on-digitalocean-kubernetes-using-helm
 
-# Good to know
+## Good to know
 
 Scaled coredns and cilium-operator from 2 to 1 replicas
 Also lowered cpu request
 
-# TODO
+## TODO
 
 - func log
 - Users
