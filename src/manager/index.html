@@ -8,8 +8,8 @@
         <div class="pure-g">
             <div class="pure-u-1-5"><p></p></div>
             <div class="pure-u-3-5"><p>        
-                <h1>Serverless</h1>
-                <p>Create functions with ease like a boss</p></p>
+                <h1>Svrless</h1>
+                <p>Create deno serverless functions with ease like a boss</p></p>
 
                 <h2>Install cli</h2>
                 <code>
@@ -17,6 +17,7 @@
                 </code>
 
                 <h2>Create function</h2>
+                <p>Create file named useragent.ts with the following contents:</p>
                 <pre>
 export default async function handler({ req }: { req: Deno.RequestEvent, conn?: Deno.Conn }): Promise<void> {
     const body = `Your user-agent is:\n\n${

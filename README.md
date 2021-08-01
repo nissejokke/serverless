@@ -83,3 +83,9 @@ https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-
 
 Scaled coredns and cilium-operator from 2 to 1 replicas
 Also lowered cpu request
+
+# TODO
+
+- func log
+- Users
+- Remove/sleep pods not being used
