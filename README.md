@@ -68,31 +68,31 @@ Router receives request and determines which app to forward to. Each app has it'
 ## Creating and running functions
 
     # Creates a function named "useragent" with code from examples/useragent.ts
-    curl --data-binary @examples/useragent.ts -X POST http://kube/func\?name\=useragent
+    curl --data-binary @examples/useragent.ts -X POST http://svrless.net/func\?name\=useragent
 
     # Call with:
-    curl http://kube/fn/useragent
+    curl http://svrless.net/fn/useragent
 
     # Cards function
-    curl --data-binary @examples/cards.ts -X POST http://kube/func\?name\=cards
+    curl --data-binary @examples/cards.ts -X POST http://svrless.net/func\?name\=cards
 
     # Draws a random playing card
-    curl http://kube/fn/cards/draw
+    curl http://svrless.net/fn/cards/draw
 
     # Simulates loads for auto scaling testing
-    curl --data-binary @examples/load.ts -X POST http://kube/func\?name\=load
-    curl http://kube/fn/load
+    curl --data-binary @examples/load.ts -X POST http://svrless.net/func\?name\=load
+    curl http://svrless.net/fn/load
 
     # Http framework test
-    curl --data-binary @examples/http.ts -X POST http://kube/func\?name\=http
-    curl http://kube/fn/http/book/1
+    curl --data-binary @examples/http.ts -X POST http://svrless.net/func\?name\=http
+    curl http://svrless.net/fn/http/book/1
 
 ## Deleting functions
 
-    curl -X DELETE http://kube/func/useragent
-    curl -X DELETE http://kube/func/cards
-    curl -X DELETE http://kube/func/load
-    curl -X DELETE http://kube/func/http
+    curl -X DELETE http://svrless.net/func/useragent
+    curl -X DELETE http://svrless.net/func/cards
+    curl -X DELETE http://svrless.net/func/load
+    curl -X DELETE http://svrless.net/func/http
 
 ## Auto scaling
 

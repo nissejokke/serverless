@@ -1,19 +1,27 @@
 import { Application, Router } from "https://deno.land/x/oak@v8.0.0/mod.ts";
-import { funcCreate } from "./func_create.ts";
-import { funcDelete } from "./func_delete.ts";
+import { funcCreate } from "./manager/func_create.ts";
+import { funcDelete } from "./manager/func_delete.ts";
 import { join, fromFileUrl, dirname } from "https://deno.land/std@0.103.0/path/mod.ts";
+import { userCreate } from "./manager/user_create.ts";
+import { userLogin } from "./manager/user_login.ts";
+import { validateUserJwt } from "./common/jwt.ts";
 
 const app = new Application();
-const router = new Router()
+const router = new Router();
+const loggedInRoutes = new Router();
 
 router
   .get("/", (ctx) => {
     ctx.response.body = 'svrless';
   })
   .get("/about", async (ctx) => {
-    const path = join(dirname(fromFileUrl(import.meta.url)), 'index.html');
+    const path = join(dirname(fromFileUrl(import.meta.url)), 'manager/index.html');
     ctx.response.body = new TextDecoder('utf-8').decode(await Deno.readFile(path));
   })
+  .post("/login", userLogin)
+  .post("/register", userCreate);
+
+loggedInRoutes
   .delete("/func/:name", funcDelete)
   .post("/func", funcCreate);
 
@@ -21,12 +29,31 @@ app.use(async (ctx, next) => {
   try {
       await next();
   } catch (err) {
+      console.error('Route error', err.message);
       ctx.response.status = err.status || 500;
       ctx.response.body = { error: { message: err.message } };
   }
-});
+})
 app.use(router.routes());
 app.use(router.allowedMethods());
+app.use(async (ctx, next) => {
+  try {
+      const authHeader = ctx.request.headers.get('Authorization') || '';
+      const jwt = authHeader.substring('Bearer'.length + 1);
+      console.log('Validating', jwt);
+      if (!jwt) throw new Error('Authorization Bearing header missing');
+      const userInfo = await validateUserJwt(jwt);
+      console.log('UserInfo from jwt', userInfo);
+      ctx.state.userInfo = userInfo;
+      await next();
+  } catch (err) {
+      console.error('Jwt validation error', err.message);
+      ctx.response.status = err.status || 401;
+      ctx.response.body = { error: { message: err.message } };
+  }
+});
+app.use(loggedInRoutes.routes());
+app.use(loggedInRoutes.allowedMethods());
 
 async function handler({ req }: { req: Deno.RequestEvent, conn?: Deno.Conn }): Promise<void> {
   console.log(req.request.url);

@@ -1,14 +1,16 @@
 import { helpers } from "https://deno.land/x/oak@v8.0.0/mod.ts";
 import { RouterContext, RouteParams } from "https://deno.land/x/oak@v8.0.0/router.ts";
+import { UserInfo } from "../common/jwt.ts";
 import { getServiceConfig, run, validateFuncName } from "./helpers.ts";
 
 export async function funcCreate(ctx: RouterContext<RouteParams, Record<string, unknown>>): Promise<void> {
-    const name = helpers.getQuery(ctx, { mergeParams: true }).name;
+    const funcName = helpers.getQuery(ctx, { mergeParams: true }).name;
     const code = await (await ctx.request.body({ type: 'text' })).value;
+    const { userId } = ctx.state.userInfo as UserInfo;
 
-    validateFuncName(name);
+    validateFuncName(funcName);
     if (!code) throw new Error('code required');
-    if (['_manager'].includes(name.toLowerCase())) throw new Error('reserved name');
+    if (['_manager'].includes(funcName.toLowerCase())) throw new Error('reserved name');
 
     // code validation disabled for now, it might be a problem that the manager downloads all kinds of code from everywhere
 
@@ -30,6 +32,7 @@ export async function funcCreate(ctx: RouterContext<RouteParams, Record<string, 
     //   throw new Error(`Compilation failed: ${diagnosticsResult.replace(/\x1b\[[0-9;]*m/g, '')}`);
     // }
 
+    const name = userId + '-' + funcName;
     const yaml = getServiceConfig(name, code);
     const file = await Deno.makeTempFile();
     await Deno.writeFile(file, new TextEncoder().encode(yaml), { create: true, append: false });

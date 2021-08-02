@@ -1,20 +1,96 @@
 
-import { parse } from "https://deno.land/std@v0.103.0/flags/mod.ts";
+import { parse } from "https://deno.land/std@0.103.0/flags/mod.ts";
 import { join, fromFileUrl, dirname } from "https://deno.land/std@0.103.0/path/mod.ts";
 import { open } from "https://deno.land/x/opener@v1.0.1/mod.ts";
+import Ask from "https://deno.land/x/ask@1.0.6/mod.ts";
 
 const args = parse(Deno.args);
 const [command, subcommand, ...restCommands] = args._;
 const cliName = 'svrless';
 
 switch (command) {
+    case 'user': {
+        switch (subcommand) {
+            case 'register':
+                if (args.email) {
+                    let password: string;
+                    if (!args.password) {
+                        const ask = new Ask();
+                        password = (await ask.input({
+                            name: "password",
+                            message: "Password:",
+                        })).password!;
+                    }
+                    else
+                        password = args.password;
+
+                    if (!password) throw new Error('password required');
+
+                    const res = await fetch(`http://svrless.net/register?${new URLSearchParams(args)}`, {
+                        method: 'POST',
+                        body: password
+                    });
+                    console.log(await res.text());
+                }
+                else {
+                    console.log(`\`${cliName} user register\` is for registering a new user\n`);
+                    console.log(`Usage: \n  ${cliName} user register [flags]\n`);
+                    console.log(`Available flags:\n  --email        Users email\n  --password       Password or leave out to enter in prompt`);
+                }
+                break;
+            case 'login': {
+                if (args.email || args.userId) {
+                    let password: string;
+                    if (!args.password) {
+                        const ask = new Ask();
+                        password = (await ask.input({
+                            name: "password",
+                            message: "Password:",
+                        })).password!;
+                    }
+                    else
+                        password = args.password;
+
+                    if (!password) throw new Error('password required');
+
+                    const res = await fetch(`http://svrless.net/login?${new URLSearchParams(args)}`, {
+                        method: 'POST',
+                        body: password
+                    });
+                    const result = await res.json();
+                    if (result.jwt) {
+                        await Deno.writeTextFile(Deno.env.get("HOME") + '/.svrless/jwt', result.jwt, { create: true });
+                        console.log('Authenticated. Token stored in ~/.svrless/jwt');
+                    }
+                    else
+                        console.log(result);
+                }
+                else {
+                    console.log(`\`${cliName} user login\` is for logging in\n`);
+                    console.log(`Usage: \n  ${cliName} user login [flags]\n`);
+                    console.log(`Available flags:\n  --email        Users email\n  --userId     UserId\n  --password       Password or leave out to enter in prompt`);
+                    console.log(`Email or userId is required`);
+                }
+                break;
+            }
+            default:
+                console.log(`The commands under \`${cliName} user\` are for handling users\n\nUsage: ${cliName} user [command]`);
+                console.log(`\nAvailable commands:`);
+                console.log(`  register`);
+                console.log(`  login`);
+        }
+        break;
+    }
     case 'func': {
         switch (subcommand) {
             case 'create':
                 if (args.name && args.path) {
-                    const res = await fetch(`http://kube/func?${new URLSearchParams(args)}`, {
+                    const res = await fetch(`http://svrless.net/func?${new URLSearchParams(args)}`, {
                         method: 'POST',
-                        body: new TextDecoder('utf-8').decode(Deno.readFileSync(args.path)) 
+                        body: new TextDecoder('utf-8').decode(Deno.readFileSync(args.path)),
+                        headers: {
+                            Authorization: 'Bearer ' + (await Deno.readTextFile(Deno.env.get("HOME") + '/.svrless/jwt')),
+                        }
                     });
                     console.log(await res.json());
                 }
@@ -26,8 +102,11 @@ switch (command) {
                 break;
             case 'delete':
                 if (args.name) {
-                    const res = await fetch(`http://kube/func/${args.name}`, {
-                        method: 'DELETE' 
+                    const res = await fetch(`http://svrless.net/func/${args.name}`, {
+                        method: 'DELETE',
+                        headers: {
+                            Authorization: 'Bearer ' + (await Deno.readTextFile(Deno.env.get("HOME") + '/.svrless/jwt')),
+                        }
                     });
                     console.log(await res.json());
                 }
@@ -74,6 +153,8 @@ switch (command) {
     default:
         console.log(`${cliName} is a command line interface (CLI) for serverless service\n`);
         console.log(`Usage: \n  ${cliName} [command]\n`);
-        console.log(`Available commands:\n  func        Handle functions`);
+        console.log(`Available commands:`);
+        console.log(`  func        Handle functions`);
+        console.log(`  user        Handler login and users`);
 
 }

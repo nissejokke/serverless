@@ -19,7 +19,7 @@ RUN apt-get update && \
     mv ~/doctl /usr/local/bin
 
 # Copy code and custom entry point
-COPY src/manager/* manager-entry.sh /app/
+COPY src manager-entry.sh /app/
 RUN chown -R deno:deno /app
 
 # Prefer not to run as root.
