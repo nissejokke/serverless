@@ -2,6 +2,7 @@ import { helpers } from "https://deno.land/x/oak@v8.0.0/mod.ts";
 import { RouterContext, RouteParams } from "https://deno.land/x/oak@v8.0.0/router.ts";
 import { createFunction, updateFunction } from "../common/functions.ts";
 import { UserInfo } from "../common/jwt.ts";
+import { getFunctionUrl } from "../common/kubernetes.ts";
 import { getServiceConfig, run, validateFuncName } from "./helpers.ts";
 
 export async function funcCreate(ctx: RouterContext<RouteParams, Record<string, unknown>>): Promise<void> {
@@ -43,7 +44,7 @@ export async function funcCreate(ctx: RouterContext<RouteParams, Record<string, 
     console.log(result.stdout);
     if (result.stderr)
         console.error(result.stderr);
-    const url = `http://svrless.net/fn/${userId}/${funcName}`;
+    const url = getFunctionUrl(funcName, userId);
     const isUnchanged = result.stdout.includes('-app unchanged');
     const isCreated = result.stdout.includes('-app created');
 

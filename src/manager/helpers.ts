@@ -111,7 +111,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: ${name}-app
-  targetCPUUtilizationPercentage: 65
+  targetCPUUtilizationPercentage: 70
 `;
   return yaml;
 }

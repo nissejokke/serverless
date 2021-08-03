@@ -14,3 +14,7 @@ export function getKubernetesResourceName(userId: string, funcName: string): str
     const name = 'client-' +  normalizedUserId + '-' + funcName;
     return name;
 }
+
+export function getFunctionUrl(funcName: string, userId: string): string {
+    return `http://svrless.net/fn/${userId}/${funcName}`;
+}

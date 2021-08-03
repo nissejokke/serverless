@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            * {
+                max-width: 100%;
+            }
+            
+            html, body {
+                font-family: "Helvetica Neue",Arial,"Noto Sans",sans-serif;
+                margin:0;
+                padding:0;
+                font-size:100%;
+                position: absolute;
+                width: 100%;
+            }
+
+            header {
+                background: #f0f0f0;
+                border-bottom: 1px solid #ccc;
+                margin:0;
+                padding:25px;
+            }
+
+            main {
+
+            }
+
+            header, main {
+                margin:0;
+                padding:25px;
+            }
+
+            h1 {
+                
+            }
+
+            h2 {
+
+            }
+
+            code {
+                font-size:110%;
+                background: #333;
+                color: yellowgreen;
+                padding: 25px 25px;
+                width: 100%;
+                display: inline-block;
+                margin-left: -25px;
+                overflow: scroll;
+            }
+
+            pre {
+                overflow: scroll;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Svrless</h1>
+            <p>Create deno serverless functions with ease like a boss</p>
+        </header>
+        
+        <main>
+            <p>
+                Features:
+                <ul>
+                    <li>Deploys function in under 20s</li>
+                    <li>Runs isolated in docker</li>
+                    <li>Auto scales depending on load</li>
+                    <li>Cli and http apies to manage functions</li>
+                </ul>
+            </p>
+            <p>! This is just an experiment and should not be regardes as a stable production environment.<br>
+                ! It is currently free of use.<br>
+                ! No garantees of uptime of functions.<br>
+                ! Functions and user account can be removed at any time.
+            </p>
+            <img src="demo.gif" style="width:800px; max-width: 100%;" /><br />
+
+            <h1>Getting started</h1>
+            <ol>
+                <li>Install</li>
+                <li>Create account</li>
+                <li>Create function</li>
+                <li>Test function locally</li>
+                <li>Deploy function</li>
+                <li>Call function</li>
+                <li>Remove function</li>
+            </ol>
+
+            <h2>Install</h2>
+            <p>
+                <a href="https://deno.land" target="_blank">Deno</a>, tested on version 1.12.1</p>
+            <p>
+                Install cli (command line utility): <br><br>
+                <code>
+                    deno compile -A --unstable https://github.com/nissejokke/serverless/blob/master/src/cli/svrless.ts<br>
+                    <br>
+                    ./svrless <br>
+                    svrless is a command line interface (CLI) for svrless.net service<br>
+                    <br>
+                    Usage: <br>
+                    svrless [command]<br>
+                    <br>
+                    Available commands:<br>
+                    &nbsp;&nbsp;func&nbsp;&nbsp;&nbsp;Handle functions<br>
+                    &nbsp;&nbsp;user&nbsp;&nbsp;&nbsp;Handler users and logins<br>
+
+                </code>
+            </p>
+
+            <h2>Create account</h2>
+            <code>
+                ./svrless user register --email test@test.se
+            </code>
+
+            <h2>Create function</h2>
+            <p>Create file named <i>useragent.ts</i> with the following contents:</p>
+            <pre>
+export default async function handler({ req }: { req: Deno.RequestEvent, conn?: Deno.Conn }): Promise<void> {
+    const body = `Your user-agent is:\n\n${
+        req.request.headers.get("user-agent") ?? "Unknown"
+    }`;
+
+    req.respondWith(new Response(body, { status: 200 }));
+}
+            </pre>
+            <h2>Test function locally</h2>
+            <code>
+                ./svrless func run useragent.ts --open
+            </code>
+            <h2>Deploy function</h2>
+            <code>
+                ./svrless func create --name myfunction --path useragent.ts
+            </code>
+            <h2>Call function</h2>
+            <code>
+                http://srvless.net/fn/x8dJ7a/myfunction
+            </code>
+            <h2>Remove function</h2>
+            <code>
+                ./svrless func create func delete --name myfunction
+            </code>
+        </main>
+
+        <footer>
+            Source: https://github.com/nissejokke/serverless
+        </footer>
+
+    </body>
+</html>

@@ -1,4 +1,4 @@
-import { Application, Router } from "https://deno.land/x/oak@v8.0.0/mod.ts";
+import { Application, Router, send } from "https://deno.land/x/oak@v8.0.0/mod.ts";
 import { funcCreate } from "./manager/func_create.ts";
 import { funcDelete } from "./manager/func_delete.ts";
 import { join, fromFileUrl, dirname } from "https://deno.land/std@0.103.0/path/mod.ts";
@@ -10,17 +10,17 @@ import { funcList } from "./manager/func_list.ts";
 const app = new Application();
 const router = new Router();
 const loggedInRoutes = new Router();
+const path = dirname(fromFileUrl(import.meta.url));
 
 router
-  .get("/", (ctx) => {
-    ctx.response.body = 'svrless';
-  })
-  .get("/about", async (ctx) => {
-    const path = join(dirname(fromFileUrl(import.meta.url)), 'manager/index.html');
-    ctx.response.body = new TextDecoder('utf-8').decode(await Deno.readFile(path));
-  })
+  // .get("/", async (ctx) => {
+  //   const path = join(dirname(fromFileUrl(import.meta.url)), 'manager/index.html');
+  //   ctx.response.body = new TextDecoder('utf-8').decode(await Deno.readFile(path));
+  // })
   .post("/login", userLogin)
   .post("/register", userCreate);
+
+  
 
 loggedInRoutes
   .get("/func", funcList)
@@ -35,7 +35,15 @@ app.use(async (ctx, next) => {
       ctx.response.status = err.status || 500;
       ctx.response.body = { error: { message: err.message } };
   }
-})
+});
+
+app.use(async (context) => {
+  await send(context, context.request.url.pathname, {
+    root: join(path, `/manager/static`),
+    index: "index.html",
+  });
+});
+
 app.use(router.routes());
 app.use(router.allowedMethods());
 app.use(async (ctx, next) => {

@@ -2,7 +2,8 @@
 import { parse } from "https://deno.land/std@0.103.0/flags/mod.ts";
 import { join, fromFileUrl, dirname } from "https://deno.land/std@0.103.0/path/mod.ts";
 import { open } from "https://deno.land/x/opener@v1.0.1/mod.ts";
-import Ask from "https://deno.land/x/ask@1.0.6/mod.ts";
+import { decodeUserJwt } from "../common/jwt.ts";
+import { promptSecret, writeJwtToUserDir } from "./helpers.ts";
 
 const args = parse(Deno.args);
 const [command, subcommand, ...restCommands] = args._;
@@ -11,16 +12,19 @@ const cliName = 'svrless';
 switch (command) {
     case 'user': {
         switch (subcommand) {
+            case 'show': {
+                const jwt = await Deno.readTextFile(Deno.env.get("HOME") + '/.svrless/jwt');
+                const data = await decodeUserJwt(jwt);
+                console.log('Logged in as:')
+                console.log(`User id: ${data.userId}`);
+                console.log(`Email: ${data.email}`);
+                break;
+            }
             case 'register':
                 if (args.email) {
                     let password: string;
-                    if (!args.password) {
-                        const ask = new Ask();
-                        password = (await ask.input({
-                            name: "password",
-                            message: "Password:",
-                        })).password!;
-                    }
+                    if (!args.password) 
+                        password = await promptSecret('Enter password: ') ?? '';
                     else
                         password = args.password;
 
@@ -30,7 +34,21 @@ switch (command) {
                         method: 'POST',
                         body: password
                     });
-                    console.log(await res.text());
+                    if (res.status === 200) {
+                        const res = await fetch(`http://svrless.net/login?${new URLSearchParams(args)}`, {
+                            method: 'POST',
+                            body: password
+                        });
+                        const result = await res.json();
+                        if (result.jwt) {
+                            await writeJwtToUserDir(result.jwt);
+                            console.log('Authenticated. Token written to ~/.svrless/jwt');
+                        }
+                        else
+                            console.error(result);
+                    }
+                    else
+                        console.log(await res.text());
                 }
                 else {
                     console.log(`\`${cliName} user register\` is for registering a new user\n`);
@@ -41,13 +59,8 @@ switch (command) {
             case 'login': {
                 if (args.email || args.userId) {
                     let password: string;
-                    if (!args.password) {
-                        const ask = new Ask();
-                        password = (await ask.input({
-                            name: "password",
-                            message: "Password:",
-                        })).password!;
-                    }
+                    if (!args.password)
+                        password = await promptSecret('Enter password: ') ?? '';
                     else
                         password = args.password;
 
@@ -59,13 +72,7 @@ switch (command) {
                     });
                     const result = await res.json();
                     if (result.jwt) {
-                        try {
-                            await Deno.mkdir(Deno.env.get("HOME") + '/.svrless/');
-                        }
-                        catch {
-                            // do nothing
-                        }
-                        await Deno.writeTextFile(Deno.env.get("HOME") + '/.svrless/jwt', result.jwt, { create: true });
+                        await writeJwtToUserDir(result.jwt);
                         console.log('Authenticated. Token written to ~/.svrless/jwt');
                     }
                     else
@@ -74,13 +81,13 @@ switch (command) {
                 else {
                     console.log(`\`${cliName} user login\` is for logging in user. Writes token to home directory.\n`);
                     console.log(`Usage: \n  ${cliName} user login [flags]\n`);
-                    console.log(`Available flags:\n  --email        Users email\n  --userId     UserId\n  --password       Password or leave out to enter in prompt`);
+                    console.log(`Available flags:\n  --email        Users email\n  --userId       UserId\n  --password     Password or leave out to enter in prompt`);
                     console.log(`Email or userId is required`);
                 }
                 break;
             }
             default:
-                console.log(`The commands under \`${cliName} user\` are for handling users\n\nUsage: ${cliName} user [command]`);
+                console.log(`The commands under \`${cliName} user\` are for handling users and logins\n\nUsage: ${cliName} user [command]`);
                 console.log(`\nAvailable commands:`);
                 console.log(`  register`);
                 console.log(`  login`);
@@ -95,7 +102,13 @@ switch (command) {
                         Authorization: 'Bearer ' + (await Deno.readTextFile(Deno.env.get("HOME") + '/.svrless/jwt')),
                     }
                 });
-                console.log(await res.json());
+                const data = await res.json();
+                if (args.json)
+                    console.log(data);
+                else {
+                    console.log('--json for json');
+                    console.table(data);
+                }
                 break;
             }
             case 'create':
@@ -167,10 +180,10 @@ switch (command) {
         break;
     }
     default:
-        console.log(`${cliName} is a command line interface (CLI) for serverless service\n`);
+        console.log(`${cliName} is a command line interface (CLI) for svrless.net service\n`);
         console.log(`Usage: \n  ${cliName} [command]\n`);
         console.log(`Available commands:`);
         console.log(`  func        Handle functions`);
-        console.log(`  user        Handler login and users`);
+        console.log(`  user        Handler users and logins`);
 
 }

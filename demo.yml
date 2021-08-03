@@ -1,0 +1,236 @@
+# The configurations that used for the recording, feel free to edit them
+config:
+
+  # Specify a command to be executed
+  # like `/bin/bash -l`, `ls`, or any other commands
+  # the default is bash for Linux
+  # or powershell.exe for Windows
+  command: bash -l
+  
+  # Specify the current working directory path
+  # the default is the current working directory path
+  
+  # Export additional ENV variables
+  env:
+    recording: true
+  
+  # Explicitly set the number of columns
+  # or use `auto` to take the current
+  # number of columns of your shell
+  cols: 80
+  
+  # Explicitly set the number of rows
+  # or use `auto` to take the current
+  # number of rows of your shell
+  rows: 12
+  
+  # Amount of times to repeat GIF
+  # If value is -1, play once
+  # If value is 0, loop indefinitely
+  # If value is a positive number, loop n times
+  repeat: 0
+  
+  # Quality
+  # 1 - 100
+  quality: 100
+  
+  # Delay between frames in ms
+  # If the value is `auto` use the actual recording delays
+  frameDelay: auto
+  
+  # Maximum delay between frames in ms
+  # Ignored if the `frameDelay` isn't set to `auto`
+  # Set to `auto` to prevent limiting the max idle time
+  maxIdleTime: 2000
+  
+  # The surrounding frame box
+  # The `type` can be null, window, floating, or solid`
+  # To hide the title use the value null
+  # Don't forget to add a backgroundColor style with a null as type
+  frameBox:
+    type: floating
+    title: svrless.net
+    style:
+      border: 0px black solid
+      # boxShadow: none
+      # margin: 0px
+  
+  # Add a watermark image to the rendered gif
+  # You need to specify an absolute path for
+  # the image on your machine or a URL, and you can also
+  # add your own CSS styles
+  watermark:
+    imagePath: null
+    style:
+      position: absolute
+      right: 15px
+      bottom: 15px
+      width: 100px
+      opacity: 0.9
+  
+  # Cursor style can be one of
+  # `block`, `underline`, or `bar`
+  cursorStyle: block
+  
+  # Font family
+  # You can use any font that is installed on your machine
+  # in CSS-like syntax
+  fontFamily: "Monaco, Lucida Console, Ubuntu Mono, Monospace"
+  
+  # The size of the font
+  fontSize: 14
+  
+  # The height of lines
+  lineHeight: 1
+  
+  # The spacing between letters
+  letterSpacing: 0
+  
+  # Theme
+  theme:
+    background: "transparent"
+    foreground: "#afafaf"
+    cursor: "#c7c7c7"
+    black: "#232628"
+    red: "#fc4384"
+    green: "#b3e33b"
+    yellow: "#ffa727"
+    blue: "#75dff2"
+    magenta: "#ae89fe"
+    cyan: "#708387"
+    white: "#d5d5d0"
+    brightBlack: "#626566"
+    brightRed: "#ff7fac"
+    brightGreen: "#c8ed71"
+    brightYellow: "#ebdf86"
+    brightBlue: "#75dff2"
+    brightMagenta: "#ae89fe"
+    brightCyan: "#b1c6ca"
+    brightWhite: "#f9f9f4"
+  
+# Records, feel free to edit them
+records:
+  - delay: 5
+    content: "$ "
+  - delay: 272
+    content: .
+  - delay: 435
+    content: /
+  - delay: 293
+    content: s
+  - delay: 71
+    content: v
+  - delay: 274
+    content: 'rless '
+  - delay: 1085
+    content: f
+  - delay: 153
+    content: u
+  - delay: 107
+    content: 'n'
+  - delay: 104
+    content: c
+  - delay: 567
+    content: ' '
+  - delay: 142
+    content: c
+  - delay: 216
+    content: r
+  - delay: 88
+    content: e
+  - delay: 189
+    content: a
+  - delay: 99
+    content: t
+  - delay: 84
+    content: e
+  - delay: 85
+    content: ' '
+  - delay: 579
+    content: '-'
+  - delay: 176
+    content: '-'
+  - delay: 327
+    content: 'n'
+  - delay: 204
+    content: a
+  - delay: 127
+    content: m
+  - delay: 133
+    content: e
+  - delay: 586
+    content: ' '
+  - delay: 750
+    content: u
+  - delay: 59
+    content: s
+  - delay: 70
+    content: e
+  - delay: 58
+    content: r
+  - delay: 399
+    content: a
+  - delay: 155
+    content: g
+  - delay: 194
+    content: e
+  - delay: 154
+    content: 'n'
+  - delay: 112
+    content: t
+  - delay: 596
+    content: ' '
+  - delay: 316
+    content: '-'
+  - delay: 166
+    content: '-'
+  - delay: 247
+    content: p
+  - delay: 120
+    content: a
+  - delay: 100
+    content: t
+  - delay: 131
+    content: h
+  - delay: 739
+    content: ' '
+  - delay: 740
+    content: e
+  - delay: 250
+    content: x
+  - delay: 131
+    content: a
+  - delay: 318
+    content: mples/
+  - delay: 905
+    content: u
+  - delay: 82
+    content: s
+  - delay: 74
+    content: e
+  - delay: 82
+    content: r
+  - delay: 237
+    content: 'agent.ts '
+  - delay: 1167
+    content: "\r\n"
+  - delay: 4166
+    content: "{ created: \e[33mtrue\e[39m, unchanged: \e[33mfalse\e[39m, url: \e[32m\"http://svrless.net/fn/F31Dqm/useragent\"\e[39m }\r\n$ "
+  - delay: 6032
+    content: c
+  - delay: 132
+    content: u
+  - delay: 152
+    content: r
+  - delay: 126
+    content: l
+  - delay: 132
+    content: ' '
+  - delay: 321
+    content: 'http://svrless.net/fn/F31Dqm/useragent'
+  - delay: 1421
+    content: "\r\n"
+  - delay: 3144
+    content: "Your user-agent is:\r\n\r\ncurl/7.64.1\n$ "
+  - delay: 3144
+    content: "\n$ "
