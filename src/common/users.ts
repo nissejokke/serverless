@@ -38,10 +38,10 @@ const client = await new Client().connect({
 
 function generateUserId(): string {
     let userId: string;
-    const nanoid2 = customAlphabet("1234567890abcdefghijklmnopqrstuvxyz-", 10);
+    const nanoid2 = customAlphabet("1234567890abcdefghijklmnopqrstuvxyzABCDEFGHIJKLMNOPQRSTUXYZ", 6);
     do {
         userId = nanoid2();
-    } while (!/^\w.*\w$/g.test(userId));
+    } while (!/^\w.*\w$/ig.test(userId));
     return userId;
 }
 

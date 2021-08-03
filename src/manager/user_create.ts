@@ -12,6 +12,7 @@ export async function userCreate(ctx: RouterContext<RouteParams, Record<string, 
 
     try {
       await createUser({ email, password });
+      ctx.response.body = 'User created, use \`func login\` to login user';
     }
     catch (err) {
       console.error(err);

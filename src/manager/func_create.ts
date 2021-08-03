@@ -32,8 +32,7 @@ export async function funcCreate(ctx: RouterContext<RouteParams, Record<string, 
     //   throw new Error(`Compilation failed: ${diagnosticsResult.replace(/\x1b\[[0-9;]*m/g, '')}`);
     // }
 
-    const name = userId + '-' + funcName;
-    const yaml = getServiceConfig(name, code);
+    const yaml = getServiceConfig(userId, funcName, code);
     const file = await Deno.makeTempFile();
     await Deno.writeFile(file, new TextEncoder().encode(yaml), { create: true, append: false });
     console.log('Yaml written');
@@ -43,9 +42,10 @@ export async function funcCreate(ctx: RouterContext<RouteParams, Record<string, 
     console.log(result.stdout);
     if (result.stderr)
         console.error(result.stderr);
+    const url = `http://svrless.net/fn/${userId}/${funcName}`;
     const isUnchanged = result.stdout.includes('-app unchanged');
     const isCreated = result.stdout.includes('-app created');
 
-    ctx.response.body = { created: isCreated, unchanged: isUnchanged };
+    ctx.response.body = { created: isCreated, unchanged: isUnchanged, url };
     ctx.response.status = result.stderr ? 500 : 200;
   }

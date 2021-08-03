@@ -1,3 +1,5 @@
+import { getKubernetesResourceName } from "../common/kubernetes.ts";
+
 /**
  * Validate function name
  * @param name 
@@ -5,7 +7,7 @@
  */
  export function validateFuncName(name?: string) {
     if (!name) throw new Error('name required');
-    if (!/^[\w\d_-]+$/.test(name)) throw new Error('name can only contain alpha numerical, dash and underscore');
+    if (!/^[\w\d-]+$/.test(name)) throw new Error('name can only contain alpha numerical, dash and underscore');
     return name;
   }
 
@@ -34,9 +36,10 @@ export async function run(cmd: string[] | [URL, ...string[]]): Promise<{ stdout:
  * @param code 
  * @returns 
  */
-export function getServiceConfig(name: string, code: string): string {
-    const codeTabbed = code.split('\n').join('\n' + '              ');
-    const yaml = `apiVersion: apps/v1
+export function getServiceConfig(userId: string, funcName: string, code: string): string {
+  const name = getKubernetesResourceName(userId, funcName);
+  const codeTabbed = code.split('\n').join('\n' + '              ');
+  const yaml = `apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ${name}-app

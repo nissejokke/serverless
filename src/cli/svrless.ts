@@ -59,14 +59,20 @@ switch (command) {
                     });
                     const result = await res.json();
                     if (result.jwt) {
+                        try {
+                            await Deno.mkdir(Deno.env.get("HOME") + '/.svrless/');
+                        }
+                        catch {
+                            // do nothing
+                        }
                         await Deno.writeTextFile(Deno.env.get("HOME") + '/.svrless/jwt', result.jwt, { create: true });
-                        console.log('Authenticated. Token stored in ~/.svrless/jwt');
+                        console.log('Authenticated. Token written to ~/.svrless/jwt');
                     }
                     else
-                        console.log(result);
+                        console.error(result);
                 }
                 else {
-                    console.log(`\`${cliName} user login\` is for logging in\n`);
+                    console.log(`\`${cliName} user login\` is for logging in user. Writes token to home directory.\n`);
                     console.log(`Usage: \n  ${cliName} user login [flags]\n`);
                     console.log(`Available flags:\n  --email        Users email\n  --userId     UserId\n  --password       Password or leave out to enter in prompt`);
                     console.log(`Email or userId is required`);

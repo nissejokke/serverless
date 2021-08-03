@@ -1,3 +1,5 @@
+import { getKubernetesResourceName } from "./common/kubernetes.ts";
+
 const port = 4000;
 
 const server = Deno.listen({ port });
@@ -7,14 +9,15 @@ async function handle(conn: Deno.Conn) {
   for await (const event of Deno.serveHttp(conn)) {
     try {
       const url = new URL(event.request.url);
-      const [, userId, name, ...rest] = url.pathname.split('/');
+      const [, userId, funcName, ...rest] = url.pathname.split('/');
       const clientUrl = rest.join('/') + url.search;
 
       if (event.request.headers.get('user-agent') === 'Probe' && new URL(event.request.url).pathname === '/healthz')
         event.respondWith(new Response());
-      else if (userId && name) {
-        const proxyUrl = `http://${userId}-${name}-service:1993/${clientUrl}`;
-        console.log(`[${new Date().toISOString()}] ${userId} -> ${name}/${clientUrl}`);
+      else if (userId && funcName) {
+        const name = getKubernetesResourceName(userId, funcName);
+        const proxyUrl = `http://${name}-service:1993/${clientUrl}`;
+        console.log(`[${new Date().toISOString()}] ${userId} -> ${funcName}/${clientUrl}`);
         let proxyRes: Response | null = null;
         let attempt = 0;
         let clientIsInStartup = false;

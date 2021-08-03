@@ -8,7 +8,7 @@ WORKDIR /app
 # Prefer not to run as root.
 USER deno
 
-COPY src/router.ts /app/
+COPY src /app/
 RUN deno cache --unstable router.ts
 
 CMD ["run", "--allow-net", "--allow-env", "--unstable", "router.ts"]

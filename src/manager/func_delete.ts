@@ -1,12 +1,15 @@
 import { RouterContext, RouteParams } from "https://deno.land/x/oak@v8.0.0/router.ts";
+import { UserInfo } from "../common/jwt.ts";
 import { getServiceConfig, run, validateFuncName } from "./helpers.ts";
 
 export async function funcDelete(ctx: RouterContext<RouteParams, Record<string, unknown>>) {
   validateFuncName(ctx.params.name);
-    const name = ctx.params.name!;
-    console.log(`Deleting func ${name}`);
+    const funcName = ctx.params.name!;
+    const { userId } = ctx.state.userInfo as UserInfo;
 
-    const yaml = getServiceConfig(name, '');
+    console.log(`Deleting func ${userId} ${funcName}`);
+
+    const yaml = getServiceConfig(userId, funcName, '');
     const file = await Deno.makeTempFile();
     await Deno.writeFile(file, new TextEncoder().encode(yaml), { create: true, append: false });
     console.log('Yaml written');
