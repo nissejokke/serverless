@@ -1,9 +1,9 @@
-import { Client } from 'https://deno.land/x/mysql@v2.9.0/mod.ts';
 import { nanoid, customAlphabet } from "https://deno.land/x/nanoid@v3.0.0/mod.ts"
 // import * as bcrypt from "https://deno.land/x/bcrypt@v0.2.4/mod.ts";
 // import { create, getNumericDate } from "https://deno.land/x/djwt@v2.2/mod.ts"
 import { createHash } from "https://deno.land/std@0.103.0/hash/mod.ts";
 import { createUserJwt } from "./jwt.ts";
+import { client } from "./db.ts";
 
 export interface User {
     userId: string;
@@ -27,14 +27,6 @@ interface UserRow {
     password: string;
     salt: string;
 }
-
-const client = await new Client().connect({
-    hostname: "mysql",
-    username: "root",
-    db: "serverless",
-    poolSize: 3, // connection limit
-    password: "db password",
-});
 
 function generateUserId(): string {
     let userId: string;

@@ -1,4 +1,5 @@
 import { RouterContext, RouteParams } from "https://deno.land/x/oak@v8.0.0/router.ts";
+import { deleteFunction } from "../common/functions.ts";
 import { UserInfo } from "../common/jwt.ts";
 import { getServiceConfig, run, validateFuncName } from "./helpers.ts";
 
@@ -19,6 +20,8 @@ export async function funcDelete(ctx: RouterContext<RouteParams, Record<string, 
     console.error(stderr);
     
     const error = Boolean(stderr);
+    if (!error)
+      await deleteFunction({ functionId: funcName, userId });
     ctx.response.status = error ? 500 : 200;
     ctx.response.body = { success: !error };
   }

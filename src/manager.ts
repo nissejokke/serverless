@@ -5,6 +5,7 @@ import { join, fromFileUrl, dirname } from "https://deno.land/std@0.103.0/path/m
 import { userCreate } from "./manager/user_create.ts";
 import { userLogin } from "./manager/user_login.ts";
 import { validateUserJwt } from "./common/jwt.ts";
+import { funcList } from "./manager/func_list.ts";
 
 const app = new Application();
 const router = new Router();
@@ -22,6 +23,7 @@ router
   .post("/register", userCreate);
 
 loggedInRoutes
+  .get("/func", funcList)
   .delete("/func/:name", funcDelete)
   .post("/func", funcCreate);
 

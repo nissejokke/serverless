@@ -1,3 +1,4 @@
+import { accessFunction } from "./common/functions.ts";
 import { getKubernetesResourceName } from "./common/kubernetes.ts";
 
 const port = 4000;
@@ -35,6 +36,11 @@ async function handle(conn: Deno.Conn) {
             if (!clientIsInStartup) throw err;
           }
         } while (clientIsInStartup && ++attempt < 20);
+        
+        accessFunction({ functionId: funcName, userId: userId })
+          .then(() => console.log('Function accessed'))
+          .catch(err => console.error(`Error from accessFunction: ${err.message}`));
+
         event.respondWith(proxyRes!);
       }
       else {

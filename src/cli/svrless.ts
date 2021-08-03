@@ -89,6 +89,15 @@ switch (command) {
     }
     case 'func': {
         switch (subcommand) {
+            case 'list': {
+                const res = await fetch(`http://svrless.net/func`, {
+                    headers: {
+                        Authorization: 'Bearer ' + (await Deno.readTextFile(Deno.env.get("HOME") + '/.svrless/jwt')),
+                    }
+                });
+                console.log(await res.json());
+                break;
+            }
             case 'create':
                 if (args.name && args.path) {
                     const res = await fetch(`http://svrless.net/func?${new URLSearchParams(args)}`, {
@@ -150,6 +159,7 @@ switch (command) {
             default:
                 console.log(`The commands under \`${cliName} func\` are for handling functions\n\nUsage: ${cliName} func [command]`);
                 console.log(`\nAvailable commands:`);
+                console.log(`  list`);
                 console.log(`  create`);
                 console.log(`  delete`);
                 console.log(`  run`);

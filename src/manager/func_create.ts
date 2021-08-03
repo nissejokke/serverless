@@ -1,5 +1,6 @@
 import { helpers } from "https://deno.land/x/oak@v8.0.0/mod.ts";
 import { RouterContext, RouteParams } from "https://deno.land/x/oak@v8.0.0/router.ts";
+import { createFunction, updateFunction } from "../common/functions.ts";
 import { UserInfo } from "../common/jwt.ts";
 import { getServiceConfig, run, validateFuncName } from "./helpers.ts";
 
@@ -45,6 +46,11 @@ export async function funcCreate(ctx: RouterContext<RouteParams, Record<string, 
     const url = `http://svrless.net/fn/${userId}/${funcName}`;
     const isUnchanged = result.stdout.includes('-app unchanged');
     const isCreated = result.stdout.includes('-app created');
+
+    if (isCreated)
+        await createFunction({ functionId: funcName, userId });
+    else
+        await updateFunction({ functionId: funcName, userId });
 
     ctx.response.body = { created: isCreated, unchanged: isUnchanged, url };
     ctx.response.status = result.stderr ? 500 : 200;
