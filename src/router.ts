@@ -5,6 +5,7 @@ const port = 4000;
 
 const server = Deno.listen({ port });
 console.log(`Router listening on ${port}`);
+const functionAccessTimeouts = new Map();
 
 async function handle(conn: Deno.Conn) {
   for await (const event of Deno.serveHttp(conn)) {
@@ -13,8 +14,10 @@ async function handle(conn: Deno.Conn) {
       const [, userId, funcName, ...rest] = url.pathname.split('/');
       const clientUrl = rest.join('/') + url.search;
 
+      // health check
       if (event.request.headers.get('user-agent') === 'Probe' && new URL(event.request.url).pathname === '/healthz')
         event.respondWith(new Response());
+      // proxy to client
       else if (userId && funcName) {
         const name = getKubernetesResourceName(userId, funcName);
         const proxyUrl = `http://${name}-service:1993/${clientUrl}`;
@@ -22,6 +25,8 @@ async function handle(conn: Deno.Conn) {
         let proxyRes: Response | null = null;
         let attempt = 0;
         let clientIsInStartup = false;
+
+        // proxy to client and handle client not being up yet
         do {
           try {
             if (clientIsInStartup) {
@@ -37,10 +42,18 @@ async function handle(conn: Deno.Conn) {
           }
         } while (clientIsInStartup && ++attempt < 20);
         
-        accessFunction({ functionId: funcName, userId: userId })
+        // write last access to db
+        const timeoutKey = funcName + '-' + userId;
+        let timeout: ReturnType<typeof setTimeout> = functionAccessTimeouts.get(timeoutKey);
+        if (timeout) clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          accessFunction({ functionId: funcName, userId: userId })
           .then(() => console.log('Function accessed'))
           .catch(err => console.error(`Error from accessFunction: ${err.message}`));
+        }, 3000);
+        functionAccessTimeouts.set(timeoutKey, timeout);
 
+        // respond
         event.respondWith(proxyRes!);
       }
       else {

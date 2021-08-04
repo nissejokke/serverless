@@ -17,7 +17,7 @@ config:
   # Explicitly set the number of columns
   # or use `auto` to take the current
   # number of columns of your shell
-  cols: 80
+  cols: 91
   
   # Explicitly set the number of rows
   # or use `auto` to take the current
@@ -32,7 +32,7 @@ config:
   
   # Quality
   # 1 - 100
-  quality: 100
+  quality: 90
   
   # Delay between frames in ms
   # If the value is `auto` use the actual recording delays
@@ -133,17 +133,17 @@ records:
   - delay: 567
     content: ' '
   - delay: 142
-    content: c
+    content: d
   - delay: 216
-    content: r
+    content: e
   - delay: 88
-    content: e
+    content: p
   - delay: 189
-    content: a
+    content: l
   - delay: 99
-    content: t
+    content: o
   - delay: 84
-    content: e
+    content: 'y'
   - delay: 85
     content: ' '
   - delay: 579
@@ -185,13 +185,17 @@ records:
   - delay: 166
     content: '-'
   - delay: 247
-    content: p
+    content: s
   - delay: 120
-    content: a
+    content: o
   - delay: 100
-    content: t
+    content: u
   - delay: 131
-    content: h
+    content: r
+  - delay: 110
+    content: c
+  - delay: 100
+    content: e
   - delay: 739
     content: ' '
   - delay: 740
@@ -231,6 +235,6 @@ records:
   - delay: 1421
     content: "\r\n"
   - delay: 3144
-    content: "Your user-agent is:\r\n\r\ncurl/7.64.1\n$ "
+    content: "Your user-agent is:\r\n\r\ncurl/7.64.1\r\n"
   - delay: 3144
-    content: "\n$ "
+    content: "\r\n "

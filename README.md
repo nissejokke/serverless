@@ -2,7 +2,7 @@
 
 Serverless hosting of Deno typescript code running in docker using kubernetes.
 
-- Deploys function in under 20s
+- Deploys typescript functions in under 20 seconds
 - Runs isolated in docker
 - Auto scales depending on load
 - Cli and http apies to manage functions
@@ -19,6 +19,13 @@ Router receives request and determines which app to forward to. Each app has it'
 1. Router maps request to client app name. For example: /useragent is mapped to kubernetes service useragent-service (which pipes to useragent-app pods)
 2. Request is proxied to useragent-service
 3. useragent-service uses one of more pods depending on load
+
+## Tech stack
+
+- Docker
+- Kubernetes
+- Deno
+- Hard coded Dgital Ocean k8s hosting only for now
 
 ## Limit functions from accessing resources
 
@@ -45,9 +52,10 @@ When testing with minikube
 
     kubectl apply -f kubernetes.yaml
     kubectl apply -f metric-server.yaml
+    kubectl apply -f mysql.yaml
 
-    # minikube ip
-    # host kube in hosts in following examples
+    # Get minikube ip
+    minikube ip
 
 ## Creating and running functions
 
@@ -75,6 +83,10 @@ Set these envs on serverless-manager:
 - KUBE_DOCTL_AUTH
 - DIGITALOCEAN_ACCESS_TOKEN
 - JWT_SECRET
+- DB_PASSWORD
+
+Set these envs on serverless-router:
+- DB_PASSWORD
 
 ## Resources
 

@@ -5,7 +5,7 @@ export const client = await new Client().connect({
     username: "root",
     db: "serverless",
     poolSize: 3, // connection limit
-    password: "db password",
+    password: Deno.env.get("DB_PASSWORD"),
 });
 
 /**

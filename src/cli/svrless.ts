@@ -98,6 +98,7 @@ switch (command) {
             default:
                 console.log(`The commands under \`${cliName} user\` are for handling users and logins\n\nUsage: ${cliName} user [command]`);
                 console.log(`\nAvailable commands:`);
+                console.log(`  show`);
                 console.log(`  register`);
                 console.log(`  login`);
         }
@@ -106,7 +107,7 @@ switch (command) {
     case 'func': {
         switch (subcommand) {
             case 'list': {
-                const res = await fetch(`http://svrless.net/func`, {
+                const res = await fetch(`http://svrless.net/api/func`, {
                     headers: {
                         Authorization: 'Bearer ' + (await getJwt()),
                     }
@@ -120,9 +121,9 @@ switch (command) {
                 }
                 break;
             }
-            case 'create':
+            case 'deploy':
                 if (args.name && args.source) {
-                    const res = await fetch(`http://svrless.net/func?${new URLSearchParams(args)}`, {
+                    const res = await fetch(`http://svrless.net/api/func?${new URLSearchParams(args)}`, {
                         method: 'POST',
                         body: new TextDecoder('utf-8').decode(Deno.readFileSync(args.source)),
                         headers: {
@@ -132,14 +133,14 @@ switch (command) {
                     console.log(await res.json());
                 }
                 else {
-                    console.log(`${cliName} func create is for creating functions\n`);
-                    console.log(`Usage: \n  ${cliName} func create [flags]\n`);
+                    console.log(`\`${cliName} func deploy\` is for deploying functions\n`);
+                    console.log(`Usage: \n  ${cliName} func deploy [flags]\n`);
                     console.log(`Available flags:\n  --name        Name of function\n  --source      Path to source code file`);
                 }
                 break;
             case 'delete':
                 if (args.name) {
-                    const res = await fetch(`http://svrless.net/func/${args.name}`, {
+                    const res = await fetch(`http://svrless.net/api/func/${args.name}`, {
                         method: 'DELETE',
                         headers: {
                             Authorization: 'Bearer ' + (await getJwt()),
@@ -148,7 +149,7 @@ switch (command) {
                     console.log(await res.json());
                 }
                 else {
-                    console.log(`${cliName} func create is for deleting functions\n`);
+                    console.log(`\`${cliName} func delete\` is for deleting functions\n`);
                     console.log(`Usage: \n  ${cliName} func delete [flags]\n`);
                     console.log(`Available flags:\n  --name        Name of function to delete`);
                 }
@@ -182,7 +183,7 @@ switch (command) {
                 console.log(`The commands under \`${cliName} func\` are for handling functions\n\nUsage: ${cliName} func [command]`);
                 console.log(`\nAvailable commands:`);
                 console.log(`  list`);
-                console.log(`  create`);
+                console.log(`  deploy`);
                 console.log(`  delete`);
                 console.log(`  run`);
         }

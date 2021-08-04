@@ -73,18 +73,18 @@
             <p>
                 Features:
                 <ul>
-                    <li>Deploys function in under 20s</li>
+                    <li>Deploys typescript functions in under 20 seconds</li>
                     <li>Runs isolated in docker</li>
                     <li>Auto scales depending on load</li>
                     <li>Cli and http apies to manage functions</li>
                 </ul>
+                <img src="static/demo.gif" style="width:800px; max-width: 100%;" /><br />
             </p>
             <p>! This is just an experiment and should not be regardes as a stable production environment.<br>
-                ! It is currently free of use.<br>
-                ! No garantees of uptime of functions.<br>
+                ! It is currently free of use but that might change.<br>
+                ! No garantees of service uptime.<br>
                 ! Functions and user account can be removed at any time.
             </p>
-            <img src="static/demo.gif" style="width:800px; max-width: 100%;" /><br />
 
             <h1>Getting started</h1>
             <ol>
@@ -141,17 +141,19 @@ export default async function handler({ req }: { req: Deno.RequestEvent, conn?: 
             <code>
                 ./svrless func run useragent.ts --open
             </code>
-            <h2>Deploy function</h2>
+            <h2>Deploy/update function</h2>
             <code>
-                ./svrless func create --name useragent --path useragent.ts
+                ./svrless func deploy --name useragent --source useragent.ts
             </code>
+            <p>Outputs: { created: true, unchanged: false, url: "http://svrless.net/fn/F31Dqm/useragent" }
+            </p>
             <h2>Call function</h2>
             <code>
-                http://srvless.net/fn/F31Dqm/useragent
+                curl http://srvless.net/fn/F31Dqm/useragent
             </code>
-            <h2>Remove function</h2>
+            <h2>Delete function</h2>
             <code>
-                ./svrless func create func delete --name useragent
+                ./svrless func delete --name useragent
             </code>
         </main>
 
