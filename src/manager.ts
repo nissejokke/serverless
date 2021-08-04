@@ -13,14 +13,18 @@ const loggedInRoutes = new Router();
 const path = dirname(fromFileUrl(import.meta.url));
 
 router
-  // .get("/", async (ctx) => {
-  //   const path = join(dirname(fromFileUrl(import.meta.url)), 'manager/index.html');
-  //   ctx.response.body = new TextDecoder('utf-8').decode(await Deno.readFile(path));
-  // })
+  .get("/", async (ctx) => {
+    const path = join(dirname(fromFileUrl(import.meta.url)), 'manager/static/index.html');
+    ctx.response.body = new TextDecoder('utf-8').decode(await Deno.readFile(path));
+  })
   .post("/login", userLogin)
-  .post("/register", userCreate);
-
-  
+  .post("/register", userCreate)
+  .get("/static/:file", async (context) => {
+    await send(context, context.params.file!, {
+      root: join(path, `/manager/static`),
+      index: "index.html",
+    });
+  });
 
 loggedInRoutes
   .get("/func", funcList)
@@ -36,14 +40,6 @@ app.use(async (ctx, next) => {
       ctx.response.body = { error: { message: err.message } };
   }
 });
-
-app.use(async (context) => {
-  await send(context, context.request.url.pathname, {
-    root: join(path, `/manager/static`),
-    index: "index.html",
-  });
-});
-
 app.use(router.routes());
 app.use(router.allowedMethods());
 app.use(async (ctx, next) => {

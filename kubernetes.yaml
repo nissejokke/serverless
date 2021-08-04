@@ -11,6 +11,7 @@ spec:
     metadata:
       labels:
         app: serverless-router
+        role: manager
     spec:
       containers:
         - name: serverless-router
@@ -66,6 +67,7 @@ spec:
     metadata:
       labels:
         app: serverless-manager
+        role: manager
     spec:
       containers:
         - name: serverless-manager

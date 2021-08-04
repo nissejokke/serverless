@@ -10,7 +10,7 @@ Serverless hosting of Deno typescript code running in docker using kubernetes.
 For more info:
 http://svrless.net
     
-# Under the hood
+## Under the hood
 
 Request -> Router -> Client 
 
@@ -20,7 +20,17 @@ Router receives request and determines which app to forward to. Each app has it'
 2. Request is proxied to useragent-service
 3. useragent-service uses one of more pods depending on load
 
+## Limit functions from accessing resources
+
+Deno security model limits access to certain parts of the system (docker container). The following flags are deno run with: --allow-net --allow-read=/temp --allow-write=/temp --unstable. That limits the function from accessing for example env variables and /etc/hosts
+
+Access to mysql database is only allowed from role manager (serverless-manager and serverless-router) using Network Policy.
+
+Perhaps there is a possibility to access kube dns and discover info about other clients, need to be investigated.
+
 ## Prerequisite
+
+When testing with minikube
 
     minikube delete
     minikube start --vm=true
@@ -60,6 +70,11 @@ kubectl autoscale deployment load-app --cpu-percent=75 --min=1 --max=10
 ## Before production
 
 Remove - --kubelet-insecure-tls in metric-server.yaml
+Set these envs on serverless-manager:
+- KUBE_CERTIFICATE_AUTH
+- KUBE_DOCTL_AUTH
+- DIGITALOCEAN_ACCESS_TOKEN
+- JWT_SECRET
 
 ## Resources
 

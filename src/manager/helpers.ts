@@ -52,6 +52,7 @@ spec:
     metadata:
       labels:
         app: ${name}-app
+        role: client
     spec:
       containers:
         - name: serverless-app

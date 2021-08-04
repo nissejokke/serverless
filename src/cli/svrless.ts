@@ -9,11 +9,20 @@ const args = parse(Deno.args);
 const [command, subcommand, ...restCommands] = args._;
 const cliName = 'svrless';
 
+async function getJwt(): Promise<string> {
+    try {
+        return await Deno.readTextFile(Deno.env.get("HOME") + '/.svrless/jwt');
+    }
+    catch (err) {
+        throw new Error(`Not logged in: failed to read ~/.svrless/jwt: ${err.message}`);
+    }
+}
+
 switch (command) {
     case 'user': {
         switch (subcommand) {
             case 'show': {
-                const jwt = await Deno.readTextFile(Deno.env.get("HOME") + '/.svrless/jwt');
+                const jwt = await getJwt();
                 const data = await decodeUserJwt(jwt);
                 console.log('Logged in as:')
                 console.log(`User id: ${data.userId}`);
@@ -99,7 +108,7 @@ switch (command) {
             case 'list': {
                 const res = await fetch(`http://svrless.net/func`, {
                     headers: {
-                        Authorization: 'Bearer ' + (await Deno.readTextFile(Deno.env.get("HOME") + '/.svrless/jwt')),
+                        Authorization: 'Bearer ' + (await getJwt()),
                     }
                 });
                 const data = await res.json();
@@ -117,7 +126,7 @@ switch (command) {
                         method: 'POST',
                         body: new TextDecoder('utf-8').decode(Deno.readFileSync(args.path)),
                         headers: {
-                            Authorization: 'Bearer ' + (await Deno.readTextFile(Deno.env.get("HOME") + '/.svrless/jwt')),
+                            Authorization: 'Bearer ' + (await getJwt()),
                         }
                     });
                     console.log(await res.json());
@@ -133,7 +142,7 @@ switch (command) {
                     const res = await fetch(`http://svrless.net/func/${args.name}`, {
                         method: 'DELETE',
                         headers: {
-                            Authorization: 'Bearer ' + (await Deno.readTextFile(Deno.env.get("HOME") + '/.svrless/jwt')),
+                            Authorization: 'Bearer ' + (await getJwt()),
                         }
                     });
                     console.log(await res.json());

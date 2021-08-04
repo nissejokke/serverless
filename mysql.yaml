@@ -89,3 +89,26 @@ spec:
       - name: mysql-persistent-storage
         persistentVolumeClaim:
           claimName: mysql-pvc-claim
+
+---
+
+# Restrict incomming traffic to mysql pods from ip and only from role manager 
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mysql-manager-access
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: mysql
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 10.245.0.0/16
+    - podSelector:
+        matchLabels:
+          role: manager
