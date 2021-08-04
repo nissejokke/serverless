@@ -121,10 +121,10 @@ switch (command) {
                 break;
             }
             case 'create':
-                if (args.name && args.path) {
+                if (args.name && args.source) {
                     const res = await fetch(`http://svrless.net/func?${new URLSearchParams(args)}`, {
                         method: 'POST',
-                        body: new TextDecoder('utf-8').decode(Deno.readFileSync(args.path)),
+                        body: new TextDecoder('utf-8').decode(Deno.readFileSync(args.source)),
                         headers: {
                             Authorization: 'Bearer ' + (await getJwt()),
                         }
@@ -134,7 +134,7 @@ switch (command) {
                 else {
                     console.log(`${cliName} func create is for creating functions\n`);
                     console.log(`Usage: \n  ${cliName} func create [flags]\n`);
-                    console.log(`Available flags:\n  --name        Name of function\n  --path       Path to code file`);
+                    console.log(`Available flags:\n  --name        Name of function\n  --source      Path to source code file`);
                 }
                 break;
             case 'delete':

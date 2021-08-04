@@ -8,14 +8,13 @@ import { validateUserJwt } from "./common/jwt.ts";
 import { funcList } from "./manager/func_list.ts";
 
 const app = new Application();
-const router = new Router();
-const loggedInRoutes = new Router();
 const path = dirname(fromFileUrl(import.meta.url));
 
+const router = new Router();
 router
   .get("/", async (ctx) => {
-    const path = join(dirname(fromFileUrl(import.meta.url)), 'manager/static/index.html');
-    ctx.response.body = new TextDecoder('utf-8').decode(await Deno.readFile(path));
+    const localpath = join(dirname(fromFileUrl(import.meta.url)), 'manager/static/index.html');
+    ctx.response.body = new TextDecoder('utf-8').decode(await Deno.readFile(localpath));
   })
   .post("/login", userLogin)
   .post("/register", userCreate)
@@ -25,11 +24,6 @@ router
       index: "index.html",
     });
   });
-
-loggedInRoutes
-  .get("/func", funcList)
-  .delete("/func/:name", funcDelete)
-  .post("/func", funcCreate);
 
 app.use(async (ctx, next) => {
   try {
@@ -44,13 +38,15 @@ app.use(router.routes());
 app.use(router.allowedMethods());
 app.use(async (ctx, next) => {
   try {
-      const authHeader = ctx.request.headers.get('Authorization') || '';
-      const jwt = authHeader.substring('Bearer'.length + 1);
-      console.log('Validating', jwt);
-      if (!jwt) throw new Error('Authorization Bearing header missing');
-      const userInfo = await validateUserJwt(jwt);
-      console.log('UserInfo from jwt', userInfo);
-      ctx.state.userInfo = userInfo;
+      if (ctx.request.url.pathname.startsWith('/api')) {
+        const authHeader = ctx.request.headers.get('Authorization') || '';
+        const jwt = authHeader.substring('Bearer'.length + 1);
+        console.log('Validating', jwt);
+        if (!jwt) throw new Error('Authorization Bearing header missing');
+        const userInfo = await validateUserJwt(jwt);
+        console.log('UserInfo from jwt', userInfo);
+        ctx.state.userInfo = userInfo;
+      }
       await next();
   } catch (err) {
       console.error('Jwt validation error', err.message);
@@ -58,6 +54,13 @@ app.use(async (ctx, next) => {
       ctx.response.body = { error: { message: err.message } };
   }
 });
+
+const loggedInRoutes = new Router();
+loggedInRoutes
+  .get("/api/func", funcList)
+  .delete("/api/func/:name", funcDelete)
+  .post("/api/func", funcCreate);
+
 app.use(loggedInRoutes.routes());
 app.use(loggedInRoutes.allowedMethods());
 

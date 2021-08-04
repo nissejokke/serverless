@@ -16,18 +16,25 @@
                 width: 100%;
             }
 
-            header {
+            header, footer {
                 background: #f0f0f0;
-                border-bottom: 1px solid #ccc;
                 margin:0;
                 padding:25px;
+            }
+
+            header {
+                border-bottom: 1px solid #ccc;
+            }
+
+            footer {
+                border-top: 1px solid #ccc;
             }
 
             main {
 
             }
 
-            header, main {
+            header, main, footer {
                 margin:0;
                 padding:25px;
             }
@@ -94,22 +101,25 @@
             <p>
                 <a href="https://deno.land" target="_blank">Deno</a>, tested on version 1.12.1</p>
             <p>
-                Install cli (command line utility): <br><br>
-                <code>
-                    deno compile -A --unstable https://github.com/nissejokke/serverless/blob/master/src/cli/svrless.ts<br>
-                    <br>
-                    ./svrless <br>
-                    svrless is a command line interface (CLI) for svrless.net service<br>
-                    <br>
-                    Usage: <br>
-                    svrless [command]<br>
-                    <br>
-                    Available commands:<br>
-                    &nbsp;&nbsp;func&nbsp;&nbsp;&nbsp;Handle functions<br>
-                    &nbsp;&nbsp;user&nbsp;&nbsp;&nbsp;Handler users and logins<br>
-
-                </code>
+                Install cli (command line utility):
             </p>
+            <code>
+                deno compile -A --unstable https://github.com/nissejokke/serverless/blob/master/src/cli/svrless.ts
+            </code>
+            <p>
+                Execute it:
+            </p>
+            <code>
+                ./svrless <br>
+                svrless is a command line interface (CLI) for svrless.net service<br>
+                <br>
+                Usage: <br>
+                &nbsp;&nbsp;svrless [command]<br>
+                <br>
+                Available commands:<br>
+                &nbsp;&nbsp;func&nbsp;&nbsp;&nbsp;Handle functions<br>
+                &nbsp;&nbsp;user&nbsp;&nbsp;&nbsp;Handler users and logins<br>
+            </code>
 
             <h2>Create account</h2>
             <code>
@@ -133,20 +143,20 @@ export default async function handler({ req }: { req: Deno.RequestEvent, conn?: 
             </code>
             <h2>Deploy function</h2>
             <code>
-                ./svrless func create --name myfunction --path useragent.ts
+                ./svrless func create --name useragent --path useragent.ts
             </code>
             <h2>Call function</h2>
             <code>
-                http://srvless.net/fn/x8dJ7a/myfunction
+                http://srvless.net/fn/F31Dqm/useragent
             </code>
             <h2>Remove function</h2>
             <code>
-                ./svrless func create func delete --name myfunction
+                ./svrless func create func delete --name useragent
             </code>
         </main>
 
         <footer>
-            Source: https://github.com/nissejokke/serverless
+            Source: https://github.com/nissejokke/serverless <img src="http://svrless.net/fn/mMa2D0/log-useragent" style="position: absolute; left: -9999px; width: 1px; height: 1px;" />
         </footer>
 
     </body>
