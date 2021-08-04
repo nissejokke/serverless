@@ -96,7 +96,7 @@ spec:
             failureThreshold: 30
             periodSeconds: 10
           # envs set manually:
-          # KUBE_CERTIFICATE_AUTH, KUBE_SERVER, KUBE_DOCTL_AUTH, DIGITALOCEAN_ACCESS_TOKEN
+          # KUBE_CERTIFICATE_AUTH, KUBE_SERVER, KUBE_DOCTL_AUTH, DIGITALOCEAN_ACCESS_TOKEN, DB_PASSWORD
           
 ---
 

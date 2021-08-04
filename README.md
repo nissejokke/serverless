@@ -1,4 +1,4 @@
-# Serverless deno function hosting experiment
+# Serverless Deno function hosting experiment
 
 Serverless hosting of Deno typescript code running in docker using kubernetes.
 
@@ -20,12 +20,18 @@ Router receives request and determines which app to forward to. Each app has it'
 2. Request is proxied to useragent-service
 3. useragent-service uses one of more pods depending on load
 
-## Tech stack
+## Technologies
 
 - Docker
 - Kubernetes
+   - Deployments, services, pods
+   - Horizontal auto scalers
+   - Network policies
+   - Persistent volumes
 - Deno
-- Hard coded Dgital Ocean k8s hosting only for now
+- Hard coded Dgital Ocean hosting only for now
+- Mysql
+- Jwt's for authentication
 
 ## Limit functions from accessing resources
 
@@ -44,18 +50,30 @@ When testing with minikube
     minikube addons enable ingress
     eval $(minikube docker-env)
 
+    # Get minikube ip
+    minikube ip
+
 ## Setup
 
     docker build -f client.Dockerfile -t nissejokke/serverless_client:latest . && docker push nissejokke/serverless_client:latest
+
     docker build -f router.Dockerfile -t nissejokke/serverless_router:latest . && docker push nissejokke/serverless_router:latest
+    
     docker build -f manager.Dockerfile -t nissejokke/serverless_manager:latest . && docker push nissejokke/serverless_manager:latest
 
     kubectl apply -f kubernetes.yaml
     kubectl apply -f metric-server.yaml
     kubectl apply -f mysql.yaml
 
-    # Get minikube ip
-    minikube ip
+    Set these envs on serverless-manager:
+    - KUBE_CERTIFICATE_AUTH
+    - KUBE_DOCTL_AUTH
+    - DIGITALOCEAN_ACCESS_TOKEN
+    - JWT_SECRET
+    - DB_PASSWORD
+
+    Set these envs on serverless-router:
+    - DB_PASSWORD
 
 ## Creating and running functions
 
@@ -78,15 +96,6 @@ kubectl autoscale deployment load-app --cpu-percent=75 --min=1 --max=10
 ## Before production
 
 Remove - --kubelet-insecure-tls in metric-server.yaml
-Set these envs on serverless-manager:
-- KUBE_CERTIFICATE_AUTH
-- KUBE_DOCTL_AUTH
-- DIGITALOCEAN_ACCESS_TOKEN
-- JWT_SECRET
-- DB_PASSWORD
-
-Set these envs on serverless-router:
-- DB_PASSWORD
 
 ## Resources
 
