@@ -1,4 +1,4 @@
-# Serverless Deno function hosting experiment
+# Serverless Deno function hosting
 
 Serverless hosting of Deno typescript code running in docker using kubernetes.
 
@@ -25,17 +25,18 @@ Router receives request and determines which app to forward to. Each app has it'
 - Docker
 - Kubernetes
    - Deployments, services, pods
+   - Ingress
    - Horizontal auto scalers
    - Network policies
    - Persistent volumes
 - Deno
-- Hard coded Dgital Ocean hosting only for now
+- Hard coded Digital Ocean hosting only for now
 - Mysql
 - Jwt's for authentication
 
 ## Limit functions from accessing resources
 
-Deno security model limits access to certain parts of the system (docker container). The following flags are deno run with: --allow-net --allow-read=/temp --allow-write=/temp --unstable. That limits the function from accessing for example env variables and /etc/hosts
+Deno security model limits access to certain parts of the system (docker container). Deno is run with the following flags: --allow-net --allow-read=/temp --allow-write=/temp --unstable. This limits the function from accessing for example env variables and /etc/hosts
 
 Access to mysql database is only allowed from role manager (serverless-manager and serverless-router) using Network Policy.
 
@@ -53,6 +54,8 @@ When testing with minikube
     # Get minikube ip
     minikube ip
 
+Kubernetes, kubectl
+
 ## Setup
 
     docker build -f client.Dockerfile -t nissejokke/serverless_client:latest . && docker push nissejokke/serverless_client:latest
@@ -65,15 +68,19 @@ When testing with minikube
     kubectl apply -f metric-server.yaml
     kubectl apply -f mysql.yaml
 
-    Set these envs on serverless-manager:
-    - KUBE_CERTIFICATE_AUTH
-    - KUBE_DOCTL_AUTH
-    - DIGITALOCEAN_ACCESS_TOKEN
-    - JWT_SECRET
-    - DB_PASSWORD
+    # Set these envs on serverless-manager:
+    # - KUBE_CERTIFICATE_AUTH
+    # - KUBE_DOCTL_AUTH
+    # - DIGITALOCEAN_ACCESS_TOKEN
+    # - JWT_SECRET
+    # - DB_PASSWORD
 
-    Set these envs on serverless-router:
-    - DB_PASSWORD
+    kubectl edit deployments.apps serverless-manager
+
+    # Set these envs on serverless-router:
+    # - DB_PASSWORD
+
+    kubectl edit deployments.apps serverless-router
 
 ## Creating and running functions
 
