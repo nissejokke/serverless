@@ -15,7 +15,12 @@
                 position: absolute;
                 width: 100%;
             }
-
+            
+            header, main, footer {
+                margin:0;
+                padding:25px;
+            }
+            
             header, footer {
                 background: #f0f0f0;
                 margin:0;
@@ -28,25 +33,9 @@
 
             footer {
                 border-top: 1px solid #ccc;
+                padding-bottom: 100px;
             }
-
-            main {
-
-            }
-
-            header, main, footer {
-                margin:0;
-                padding:25px;
-            }
-
-            h1 {
-                
-            }
-
-            h2 {
-
-            }
-
+            
             code {
                 font-size:110%;
                 background: #333;
@@ -66,7 +55,7 @@
     <body>
         <header>
             <h1>Svrless</h1>
-            <p>Create deno serverless functions with ease like a boss</p>
+            <p>Create Deno serverless functions with ease</p>
         </header>
         
         <main>
@@ -158,7 +147,7 @@ export default async function handler({ req }: { req: Deno.RequestEvent, conn?: 
         </main>
 
         <footer>
-            <a href="https://github.com/nissejokke/serverless"><img src="static/iconmonstr-github-1.svg" style="top: 5px; position: relative;" /> https://github.com/nissejokke/serverless</a> <img src="http://svrless.net/fn/mMa2D0/log-useragent" style="position: absolute; left: -9999px; width: 1px; height: 1px;" />
+            <a href="https://github.com/nissejokke/serverless" target="_blank"><img src="static/iconmonstr-github-1.svg" style="top: 5px; position: relative;" /> https://github.com/nissejokke/serverless</a> <img src="http://svrless.net/fn/mMa2D0/log-useragent" style="position: absolute; left: -9999px; width: 1px; height: 1px;" />
         </footer>
 
     </body>

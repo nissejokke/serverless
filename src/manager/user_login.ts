@@ -1,5 +1,6 @@
 import { helpers } from "https://deno.land/x/oak@v8.0.0/mod.ts";
 import { RouterContext, RouteParams } from "https://deno.land/x/oak@v8.0.0/router.ts";
+import { HttpError } from "../common/errors.ts";
 import { loginUser } from '../common/users.ts';
 
 export async function userLogin(ctx: RouterContext<RouteParams, Record<string, unknown>>): Promise<void> {
@@ -16,8 +17,6 @@ export async function userLogin(ctx: RouterContext<RouteParams, Record<string, u
     }
     catch (err) {
         console.error(`Login failed: ${err.message}`);
-        const err2 = new Error('Login failed') as any;
-        err2.status = 401;
-        throw err2;
+        throw new HttpError('Login failed', 401, err);
     }
 }

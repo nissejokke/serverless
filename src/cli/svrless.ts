@@ -121,6 +121,23 @@ switch (command) {
                 }
                 break;
             }
+            case 'log': {
+                if (args.name) {
+                    const res = await fetch(`http://svrless.net/api/func/${args.name}/log`, {
+                        headers: {
+                            Authorization: 'Bearer ' + (await getJwt()),
+                        }
+                    });
+                    const data = await res.text();
+                    console.log(data);
+                }
+                else {
+                    console.log(`\`${cliName} func log\` is for getting internal log from function\n`);
+                    console.log(`Usage: \n  ${cliName} func log [flags]\n`);
+                    console.log(`Available flags:\n  --name        Name of function`);
+                }
+                break;
+            }
             case 'deploy':
                 if (args.name && args.source) {
                     const res = await fetch(`http://svrless.net/api/func?${new URLSearchParams(args)}`, {
@@ -183,6 +200,7 @@ switch (command) {
                 console.log(`The commands under \`${cliName} func\` are for handling functions\n\nUsage: ${cliName} func [command]`);
                 console.log(`\nAvailable commands:`);
                 console.log(`  list`);
+                console.log(`  log`);
                 console.log(`  deploy`);
                 console.log(`  delete`);
                 console.log(`  run`);

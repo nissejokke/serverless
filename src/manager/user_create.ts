@@ -1,5 +1,6 @@
 import { helpers } from "https://deno.land/x/oak@v8.0.0/mod.ts";
 import { RouterContext, RouteParams } from "https://deno.land/x/oak@v8.0.0/router.ts";
+import { HttpError } from "../common/errors.ts";
 import { createUser } from '../common/users.ts';
 
 export async function userCreate(ctx: RouterContext<RouteParams, Record<string, unknown>>): Promise<void> {
@@ -16,6 +17,6 @@ export async function userCreate(ctx: RouterContext<RouteParams, Record<string, 
     }
     catch (err) {
       console.error(err);
-      throw new Error('Failed to create user');
+      throw new HttpError('Failed to create user', 500);
     }
   }

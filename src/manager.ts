@@ -6,6 +6,7 @@ import { userCreate } from "./manager/user_create.ts";
 import { userLogin } from "./manager/user_login.ts";
 import { validateUserJwt } from "./common/jwt.ts";
 import { funcList } from "./manager/func_list.ts";
+import { funcLog } from "./manager/func_log.ts";
 
 const app = new Application();
 const path = dirname(fromFileUrl(import.meta.url));
@@ -29,7 +30,7 @@ app.use(async (ctx, next) => {
   try {
       await next();
   } catch (err) {
-      console.error('Route error', err.message);
+      console.error(`Route error ${ctx.request.url}:`, err.message);
       ctx.response.status = err.status || 500;
       ctx.response.body = { error: { message: err.message } };
   }
@@ -59,7 +60,8 @@ const loggedInRoutes = new Router();
 loggedInRoutes
   .get("/api/func", funcList)
   .delete("/api/func/:name", funcDelete)
-  .post("/api/func", funcCreate);
+  .post("/api/func", funcCreate)
+  .get("/api/func/:name/log", funcLog)
 
 app.use(loggedInRoutes.routes());
 app.use(loggedInRoutes.allowedMethods());

@@ -36,7 +36,7 @@ Router receives request and determines which app to forward to. Each app has it'
 
 ## Limit functions from accessing resources
 
-Deno security model limits access to certain parts of the system (docker container). Deno is run with the following flags: --allow-net --allow-read=/temp --allow-write=/temp --unstable. This limits the function from accessing for example env variables and /etc/hosts
+Deno security model limits access to certain parts of the system (docker container). Deno is run with the following flags: --allow-net --allow-read=/temp --allow-write=/temp --unstable. This limits the function from accessing for example env variables. Deno process is run as custom user which has access only to current directory limiting it from accessing for example /etc/hosts.
 
 Access to mysql database is only allowed from role manager (serverless-manager and serverless-router) using Network Policy.
 
@@ -115,6 +115,5 @@ Also lowered cpu request
 
 ## TODO
 
-- Func log
 - Remove/sleep pods not being used
 - Https

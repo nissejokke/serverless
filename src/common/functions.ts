@@ -10,6 +10,12 @@ export interface Func extends FuncId {
     lastUpdated: Date;
 }
 
+export async function getFunction(func: FuncId): Promise<Func> {
+    const { functionId, userId } = func;
+    const result = await client.query(`SELECT functionId, userId, lastAccessed, lastUpdated FROM Functions WHERE functionId = ? AND userId = ?`, [functionId, userId]);
+    return result[0];
+}
+
 export async function createFunction(func: FuncId): Promise<void> {
     const { functionId, userId } = func;
     await client.execute(`INSERT INTO Functions (functionId, userId, lastUpdated) VALUES (?, ?, ?)`, [functionId, userId, new Date()]);
