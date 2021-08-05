@@ -113,6 +113,25 @@ spec:
 ---
 
 apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: only-manager-can-call-clients-network-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      role: client
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          role: manager
+
+---
+
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: main-ingress

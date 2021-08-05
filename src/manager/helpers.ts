@@ -85,7 +85,12 @@ spec:
           - name: CLIENT_CODE
             value: |
               ${codeTabbed}
-
+      dnsConfig:
+        nameservers:
+          - 8.8.8.8
+          - 8.8.4.4
+      dnsPolicy: None
+      
 ---
 
 kind: Service

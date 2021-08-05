@@ -16,9 +16,9 @@ Request -> Router -> Client
 
 Router receives request and determines which app to forward to. Each app has it's own kubernetes service which can have multiple pods depending on load. Function code is injected as parameter to pre built docker image.
 
-1. Router maps request to client app name. For example: /useragent is mapped to kubernetes service useragent-service (which pipes to useragent-app pods)
-2. Request is proxied to useragent-service
-3. useragent-service uses one of more pods depending on load
+1. Router maps request to client app name. For example: /xxx/useragent (user/function name) is mapped to kubernetes service xxx-useragent-service (which pipes to xxx-useragent-app pods)
+2. Request is proxied to xxx-useragent-service
+3. xxx-useragent-service uses one of more pods depending on load
 
 ## Technologies
 
@@ -40,7 +40,11 @@ Deno security model limits access to certain parts of the system (docker contain
 
 Access to mysql database is only allowed from role manager (serverless-manager and serverless-router) using Network Policy.
 
-Perhaps there is a possibility to access kube dns and discover info about other clients, need to be investigated.
+Only role manager can call clients.
+
+Clients use only external DNS to make it hander to discover information about other clients.
+
+There might be a possibility to do DNS requests against cluster's core dns ip to lookup service adresses. For example nslookup 10.245.150.16 equivalent in Deno code would get the service dns name. This could be mitigated by using names of services which cannot be translatable to svrless.net urls, thought this would require storing a random id in a database and fetch that id before proxying to client - which increases complexity and decreases performance.
 
 ## Prerequisite
 
@@ -59,9 +63,7 @@ Kubernetes, kubectl
 ## Setup
 
     docker build -f client.Dockerfile -t nissejokke/serverless_client:latest . && docker push nissejokke/serverless_client:latest
-
     docker build -f router.Dockerfile -t nissejokke/serverless_router:latest . && docker push nissejokke/serverless_router:latest
-    
     docker build -f manager.Dockerfile -t nissejokke/serverless_manager:latest . && docker push nissejokke/serverless_manager:latest
 
     kubectl apply -f kubernetes.yaml
@@ -81,6 +83,9 @@ Kubernetes, kubectl
     # - DB_PASSWORD
 
     kubectl edit deployments.apps serverless-router
+
+    # install nginx ingress using helm:
+    https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-on-digitalocean-kubernetes-using-helm
 
 ## Creating and running functions
 
@@ -106,7 +111,8 @@ Remove - --kubelet-insecure-tls in metric-server.yaml
 
 ## Resources
 
-https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-on-digitalocean-kubernetes-using-helm
+- https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-on-digitalocean-kubernetes-using-helm
+- https://kubernetes.io/blog/2015/10/some-things-you-didnt-know-about-kubectl_28/
 
 ## Good to know
 
