@@ -120,7 +120,7 @@
             </code>
 
             <h2>Create function</h2>
-            <p>Create file named <i>useragent.ts</i> with the following contents:</p>
+            <p>Create file named <i>useragent.ts</i> with the following contents. For more info visit <a href="https://deno.land/manual/examples/http_server#sample-web-server">Deno manual</a>. More examples <a href="https://github.com/nissejokke/serverless/tree/master/examples">here</a>.</p>
             <pre><code class="language-typescript">
     export default async function handler({ req }: { req: Deno.RequestEvent, conn?: Deno.Conn }): Promise<void> {
         const body = `Your user-agent is:\n\n${

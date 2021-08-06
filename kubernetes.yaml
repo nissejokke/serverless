@@ -140,7 +140,8 @@ metadata:
     kubernetes.io/ingress.class: nginx
 spec:
   rules:
-  - http:
+  - host: "svrless.net"
+    http:
       paths:
       - path: /()(.*)
         pathType: Prefix
@@ -149,7 +150,8 @@ spec:
             name: serverless-manager
             port:
               number: 4001
-  - http:
+  - host: "svrless.net"
+    http:
       paths:
       - path: /fn(/|$)(.*)
         pathType: Prefix
