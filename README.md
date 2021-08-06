@@ -3,7 +3,7 @@
 Serverless hosting of Deno typescript code running in docker using kubernetes.
 
 - Deploys typescript functions in under 20 seconds
-- Runs isolated in docker
+- Runs isolated in Docker
 - Auto scales depending on load
 - Cli and http apies to manage functions
 

@@ -35,7 +35,7 @@
                 border-top: 1px solid #ccc;
                 padding-bottom: 100px;
             }
-            
+
             code {
                 font-size:110%;
                 background: #333;
@@ -50,20 +50,24 @@
             pre {
                 overflow: scroll;
             }
+
+            h2 {
+                margin-top: 30px;
+            }
         </style>
     </head>
     <body>
         <header>
             <h1>Svrless</h1>
-            <p>Create Deno serverless functions with ease</p>
+            <p>Deploy typescript serverless functions like a boss</p>
         </header>
         
         <main>
             <p>
                 Features:
                 <ul>
-                    <li>Deploys typescript functions in under 20 seconds</li>
-                    <li>Runs isolated in docker</li>
+                    <li>Deploys Deno typescript functions in under 20 seconds</li>
+                    <li>Runs isolated in Docker</li>
                     <li>Auto scales depending on load</li>
                     <li>Cli and http apies to manage functions</li>
                 </ul>
@@ -117,15 +121,15 @@
 
             <h2>Create function</h2>
             <p>Create file named <i>useragent.ts</i> with the following contents:</p>
-            <pre>
-export default async function handler({ req }: { req: Deno.RequestEvent, conn?: Deno.Conn }): Promise<void> {
-    const body = `Your user-agent is:\n\n${
-        req.request.headers.get("user-agent") ?? "Unknown"
-    }`;
-
-    req.respondWith(new Response(body, { status: 200 }));
-}
-            </pre>
+            <pre><code class="language-typescript">
+    export default async function handler({ req }: { req: Deno.RequestEvent, conn?: Deno.Conn }): Promise<void> {
+        const body = `Your user-agent is:\n\n${
+            req.request.headers.get("user-agent") ?? "Unknown"
+            }`;
+        
+        req.respondWith(new Response(body, { status: 200 }));
+    }
+            </code></pre>
             <h2>Test function locally</h2>
             <code>
                 ./svrless func run useragent.ts --open
@@ -134,8 +138,10 @@ export default async function handler({ req }: { req: Deno.RequestEvent, conn?: 
             <code>
                 ./svrless func deploy --name useragent --source useragent.ts
             </code>
-            <p>Outputs: { created: true, unchanged: false, url: "http://svrless.net/fn/F31Dqm/useragent" }
-            </p>
+            <p>Outputs</p>
+            <pre><code class="language-json">
+    { created: true, unchanged: false, url: "http://svrless.net/fn/F31Dqm/useragent" }
+            </code></pre>
             <h2>Call function</h2>
             <code>
                 curl http://srvless.net/fn/F31Dqm/useragent
@@ -149,6 +155,9 @@ export default async function handler({ req }: { req: Deno.RequestEvent, conn?: 
         <footer>
             <a href="https://github.com/nissejokke/serverless" target="_blank"><img src="static/iconmonstr-github-1.svg" style="top: 5px; position: relative;" /> https://github.com/nissejokke/serverless</a> <img src="http://svrless.net/fn/mMa2D0/log-useragent" style="position: absolute; left: -9999px; width: 1px; height: 1px;" />
         </footer>
-
+        
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/default.min.css">
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script>
     </body>
 </html>

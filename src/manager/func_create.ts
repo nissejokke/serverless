@@ -14,26 +14,6 @@ export async function funcCreate(ctx: RouterContext<RouteParams, Record<string, 
     if (!code) throw new Error('code required');
     if (['_manager'].includes(funcName.toLowerCase())) throw new Error('reserved name');
 
-    // code validation disabled for now, it might be a problem that the manager downloads all kinds of code from everywhere
-
-    // validate code by compiling
-    // console.log('Saving code in temp file');
-    // console.log(code);
-    // const codeFile = await Deno.makeTempFile() + '.ts';
-    // await Deno.writeFile(codeFile, new TextEncoder().encode(code), { create: true, append: false });
-    // console.log('Compiling');
-
-    // const { diagnostics } = await Deno.emit(codeFile, { compilerOptions: { lib: ["deno.unstable", "deno.window"] } });
-    // Deno.remove(codeFile);
-
-    // if (diagnostics.length) {
-    //   const diagnosticsResult = Deno.formatDiagnostics(diagnostics);
-    //   console.warn('Compilation failed:');
-    //   console.warn(diagnosticsResult);
-    //   // deno-lint-ignore no-control-regex
-    //   throw new Error(`Compilation failed: ${diagnosticsResult.replace(/\x1b\[[0-9;]*m/g, '')}`);
-    // }
-
     const yaml = getServiceConfig(userId, funcName, code);
     const file = await Deno.makeTempFile();
     await Deno.writeFile(file, new TextEncoder().encode(yaml), { create: true, append: false });

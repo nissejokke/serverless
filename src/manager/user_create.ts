@@ -17,6 +17,6 @@ export async function userCreate(ctx: RouterContext<RouteParams, Record<string, 
     }
     catch (err) {
       console.error(err);
-      throw new HttpError('Failed to create user', 500);
+      throw new HttpError('Failed to create user', err.status || 500);
     }
   }

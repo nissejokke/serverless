@@ -4,6 +4,7 @@ import { nanoid, customAlphabet } from "https://deno.land/x/nanoid@v3.0.0/mod.ts
 import { createHash } from "https://deno.land/std@0.103.0/hash/mod.ts";
 import { createUserJwt } from "./jwt.ts";
 import { client } from "./db.ts";
+import { HttpError } from "./errors.ts";
 
 export interface User {
     userId: string;
@@ -37,10 +38,14 @@ function generateUserId(): string {
     return userId;
 }
 
+export function normalizeEmail(email?: string): string {
+    return (email ?? '').toLowerCase().trim();
+}
+
 export async function createUser(user: CreateUser): Promise<void> {
-    const { email, password } = user;
+    const { password } = user;
+    const email = normalizeEmail(user.email);
     const salt = nanoid(16);
-    const userId = generateUserId();
     const hasher = createHash("sha3-512");
     hasher.update(password + salt);
     const hash = hasher.toString("base64");
@@ -48,8 +53,19 @@ export async function createUser(user: CreateUser): Promise<void> {
     // const salt = await bcrypt.genSalt(12);
     // const hash = await bcrypt.hash(password, salt);
 
-    // TODO: Handle userId collisions
-    await client.execute(`INSERT INTO Users (userId, email, password, salt) VALUES (?, ?, ?, ?)`, [userId, email, hash, salt])
+    do {
+        const userId = generateUserId();
+        try {
+            await client.execute(`INSERT INTO Users (userId, email, password, salt) VALUES (?, ?, ?, ?)`, [userId, email, hash, salt]);
+            return;
+        }
+        catch (err) {
+            if (err.message.includes('Duplicate entry') && err.message.includes('for key \'PRIMARY\''))
+                continue;
+            if (err.message.includes('Duplicate entry') && err.message.includes('for key \'Index_UsersEmail\''))
+                throw new HttpError(`Email address "${email}" already exists`, 409);
+        }
+    } while (true);
 }
 
 /**
@@ -58,7 +74,8 @@ export async function createUser(user: CreateUser): Promise<void> {
  * @returns jwt
  */
 export async function loginUser(credentials: LoginUser): Promise<string> {
-    const { userId, email, password } = credentials;
+    const { userId, password } = credentials;
+    const email = normalizeEmail(credentials.email);
     let user: UserRow | null = null;
     if (userId) {
         const users = await client.query(`SELECT * FROM Users WHERE userId = ?`, [userId]);
