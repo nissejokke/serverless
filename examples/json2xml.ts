@@ -11,6 +11,7 @@ export default async function handler({ req }: { req: Deno.RequestEvent, conn?: 
     const locale = url.searchParams.get('locale') ?? 'en-GB';
 
     if (!source || !query) throw new Error('url and query required');
+    console.log(source);
     const request = await fetch(source);
     let json = await request.json();
     
