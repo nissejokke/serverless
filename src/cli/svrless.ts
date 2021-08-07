@@ -39,12 +39,12 @@ switch (command) {
 
                     if (!password) throw new Error('password required');
 
-                    const res = await fetch(`http://svrless.net/register?${new URLSearchParams(args)}`, {
+                    const res = await fetch(`https://svrless.net/register?${new URLSearchParams(args)}`, {
                         method: 'POST',
                         body: password
                     });
                     if (res.status === 200) {
-                        const res = await fetch(`http://svrless.net/login?${new URLSearchParams(args)}`, {
+                        const res = await fetch(`https://svrless.net/login?${new URLSearchParams(args)}`, {
                             method: 'POST',
                             body: password
                         });
@@ -75,7 +75,7 @@ switch (command) {
 
                     if (!password) throw new Error('password required');
 
-                    const res = await fetch(`http://svrless.net/login?${new URLSearchParams(args)}`, {
+                    const res = await fetch(`https://svrless.net/login?${new URLSearchParams(args)}`, {
                         method: 'POST',
                         body: password
                     });
@@ -107,7 +107,7 @@ switch (command) {
     case 'func': {
         switch (subcommand) {
             case 'list': {
-                const res = await fetch(`http://svrless.net/api/func`, {
+                const res = await fetch(`https://svrless.net/api/func`, {
                     headers: {
                         Authorization: 'Bearer ' + (await getJwt()),
                     }
@@ -123,7 +123,7 @@ switch (command) {
             }
             case 'log': {
                 if (args.name) {
-                    const res = await fetch(`http://svrless.net/api/func/${args.name}/log`, {
+                    const res = await fetch(`https://svrless.net/api/func/${args.name}/log`, {
                         headers: {
                             Authorization: 'Bearer ' + (await getJwt()),
                         }
@@ -140,7 +140,7 @@ switch (command) {
             }
             case 'deploy':
                 if (args.name && args.source) {
-                    const res = await fetch(`http://svrless.net/api/func?${new URLSearchParams(args)}`, {
+                    const res = await fetch(`https://svrless.net/api/func?${new URLSearchParams(args)}`, {
                         method: 'POST',
                         body: new TextDecoder('utf-8').decode(Deno.readFileSync(args.source)),
                         headers: {
@@ -157,7 +157,7 @@ switch (command) {
                 break;
             case 'delete':
                 if (args.name) {
-                    const res = await fetch(`http://svrless.net/api/func/${args.name}`, {
+                    const res = await fetch(`https://svrless.net/api/func/${args.name}`, {
                         method: 'DELETE',
                         headers: {
                             Authorization: 'Bearer ' + (await getJwt()),

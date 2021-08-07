@@ -16,5 +16,5 @@ export function getKubernetesResourceName(userId: string, funcName: string): str
 }
 
 export function getFunctionUrl(funcName: string, userId: string): string {
-    return `http://svrless.net/fn/${userId}/${funcName}`;
+    return `https://svrless.net/fn/${userId}/${funcName}`;
 }

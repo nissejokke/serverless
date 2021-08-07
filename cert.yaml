@@ -1,0 +1,10 @@
+#https://cert-manager.io/docs/configuration/ca/
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: letsencrypt-prod
+  namespace: cert-manager
+data:
+  tls.crt: <public key>
+  tls.key: <private key>

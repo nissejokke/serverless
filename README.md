@@ -8,7 +8,7 @@ Serverless hosting of Deno typescript code running in docker using kubernetes.
 - Cli and http apies to manage functions
 
 For more info:
-http://svrless.net
+https://svrless.net
     
 ## Under the hood
 
@@ -84,20 +84,24 @@ Kubernetes, kubectl
 
     kubectl edit deployments.apps serverless-router
 
-    # install nginx ingress using helm:
+    # install nginx ingress and cert-manager using helm:
     https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-on-digitalocean-kubernetes-using-helm
+
+    # Create cert using openssl, enter keys in cert.yaml, described here: https://cert-manager.io/docs/configuration/ca/
+    kubectl apply -f cert.yaml
+    kubectl apply -f production_issuer.yaml
 
 ## Creating and running functions
 
     # Creates a function named "useragent" with code from examples/useragent.ts
-    curl --data-binary @examples/useragent.ts -X POST -H "Authorization: Bearer xxx" http://svrless.net/func\?name\=useragent
+    curl --data-binary @examples/useragent.ts -X POST -H "Authorization: Bearer xxx" https://svrless.net/func\?name\=useragent
 
     # Call with:
-    curl http://svrless.net/fn/xxxxx/useragent
+    curl https://svrless.net/fn/xxxxx/useragent
 
 ## Deleting functions
 
-    curl -X DELETE -H "Authorization: Bearer xxx" http://svrless.net/func/useragent
+    curl -X DELETE -H "Authorization: Bearer xxx" https://svrless.net/func/useragent
 
 ## Auto scaling
 
@@ -122,4 +126,3 @@ Also lowered cpu request
 ## TODO
 
 - Remove/sleep pods not being used
-- Https

@@ -219,7 +219,7 @@ records:
   - delay: 1167
     content: "\r\n"
   - delay: 4166
-    content: "{ created: \e[33mtrue\e[39m, unchanged: \e[33mfalse\e[39m, url: \e[32m\"http://svrless.net/fn/F31Dqm/useragent\"\e[39m }\r\n$ "
+    content: "{ created: \e[33mtrue\e[39m, unchanged: \e[33mfalse\e[39m, url: \e[32m\"https://svrless.net/fn/F31Dqm/useragent\"\e[39m }\r\n$ "
   - delay: 6032
     content: c
   - delay: 132
@@ -231,7 +231,7 @@ records:
   - delay: 132
     content: ' '
   - delay: 321
-    content: 'http://svrless.net/fn/F31Dqm/useragent'
+    content: 'https://svrless.net/fn/F31Dqm/useragent'
   - delay: 1421
     content: "\r\n"
   - delay: 3144
