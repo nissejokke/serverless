@@ -91,6 +91,13 @@ Kubernetes, kubectl
     kubectl apply -f cert.yaml
     kubectl apply -f production-issuer.yaml
 
+    # Added resource limits to cert-manager
+    resources:
+        limits:
+            cpu: 150m
+        requests:
+            cpu: 10m
+
 ## Creating and running functions
 
     # Creates a function named "useragent" with code from examples/useragent.ts

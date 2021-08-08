@@ -60,7 +60,7 @@ spec:
           imagePullPolicy: Always
           resources:
             limits:
-              cpu: 250m
+              cpu: 100m
             requests:
               cpu: 5m
           livenessProbe:
