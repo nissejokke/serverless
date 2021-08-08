@@ -20,7 +20,7 @@ export async function validateUserJwt(jwt:string): Promise<UserJwtInfo> {
 }
 
 export async function createUserJwt(user: UserInfo): Promise<string> {
-    const jwt = await create({ alg: "HS512", typ: "JWT" }, { userId: user!.userId, email: user!.email, exp: getNumericDate(60 * 60 * 24 * 7 * 3) }, jwtSecret!);
+    const jwt = await create({ alg: "HS512", typ: "JWT" }, { userId: user!.userId, email: user!.email, exp: getNumericDate(60 * 60 * 24 * 7 * 3 /** Three weeks */) }, jwtSecret!);
     return jwt;
 }
 

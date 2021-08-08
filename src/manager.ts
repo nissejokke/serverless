@@ -7,6 +7,7 @@ import { userLogin } from "./manager/user_login.ts";
 import { validateUserJwt } from "./common/jwt.ts";
 import { funcList } from "./manager/func_list.ts";
 import { funcLog } from "./manager/func_log.ts";
+import { userRefreshJwt } from "./manager/user_refresh_jwt.ts";
 
 const app = new Application();
 const path = dirname(fromFileUrl(import.meta.url));
@@ -62,6 +63,7 @@ loggedInRoutes
   .delete("/api/func/:name", funcDelete)
   .post("/api/func", funcCreate)
   .get("/api/func/:name/log", funcLog)
+  .post("/api/user/refresh-jwt", userRefreshJwt);
 
 app.use(loggedInRoutes.routes());
 app.use(loggedInRoutes.allowedMethods());

@@ -18,6 +18,23 @@ async function getJwt(): Promise<string> {
     }
 }
 
+/**
+ * Runs after command which requires login
+ */
+async function postAction() {
+    // update jwt
+    const res = await fetch(`https://svrless.net/api/user/refresh-jwt`, {
+        method: 'POST',
+        headers: {
+            Authorization: 'Bearer ' + (await getJwt()),
+        }
+    });
+    const result = await res.json();
+    if (result.jwt) {
+        await writeJwtToUserDir(result.jwt);
+    }
+}
+
 switch (command) {
     case 'user': {
         switch (subcommand) {
@@ -119,6 +136,7 @@ switch (command) {
                     console.log('--json for json');
                     console.table(data);
                 }
+                await postAction();
                 break;
             }
             case 'log': {
@@ -130,6 +148,7 @@ switch (command) {
                     });
                     const data = await res.text();
                     console.log(data);
+                    await postAction();
                 }
                 else {
                     console.log(`\`${cliName} func log\` is for getting internal log from function\n`);
@@ -148,6 +167,7 @@ switch (command) {
                         }
                     });
                     console.log(await res.json());
+                    await postAction()
                 }
                 else {
                     console.log(`\`${cliName} func deploy\` is for deploying functions\n`);
@@ -164,6 +184,7 @@ switch (command) {
                         }
                     });
                     console.log(await res.json());
+                    await postAction();
                 }
                 else {
                     console.log(`\`${cliName} func delete\` is for deleting functions\n`);
