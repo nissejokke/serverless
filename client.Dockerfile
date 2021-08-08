@@ -16,4 +16,4 @@ RUN deno cache --unstable client.ts
 #RUN deno cache client.ts
 ENTRYPOINT ["/app/client-entry.sh"]
 
-CMD ["run", "--allow-net", "--allow-read=/tmp", "--allow-write=/tmp", "--unstable", "client.ts"]
+CMD ["run", "--allow-net", "--allow-read=/tmp,/private", "--allow-write=/tmp,/private", "--unstable", "client.ts"]
