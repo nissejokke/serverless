@@ -7,7 +7,7 @@ import { getServiceConfig, run, validateFuncName } from "./helpers.ts";
 
 export async function funcCreate(ctx: RouterContext<RouteParams, Record<string, unknown>>): Promise<void> {
     const funcName = helpers.getQuery(ctx, { mergeParams: true }).name;
-    const code = await (await ctx.request.body({ type: 'text' })).value;
+    const code = (await (await ctx.request.body({ type: 'text' })).value ?? '').trim();
     const { userId } = ctx.state.userInfo as UserInfo;
 
     validateFuncName(funcName);
@@ -29,9 +29,9 @@ export async function funcCreate(ctx: RouterContext<RouteParams, Record<string, 
     const isCreated = result.stdout.includes('-app created');
 
     if (isCreated)
-        await createFunction({ functionId: funcName, userId });
+        await createFunction({ functionId: funcName, userId, code });
     else
-        await updateFunction({ functionId: funcName, userId });
+        await updateFunction({ functionId: funcName, userId, code });
 
     ctx.response.body = { created: isCreated, unchanged: isUnchanged, url };
     ctx.response.status = result.stderr ? 500 : 200;

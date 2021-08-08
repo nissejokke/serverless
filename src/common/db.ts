@@ -29,4 +29,6 @@ CREATE TABLE `Functions` (
   `lastUpdated` datetime DEFAULT NULL,
   PRIMARY KEY (`functionId`,`userId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
+
+ALTER TABLE Functions ADD COLUMN code MEDIUMTEXT;
  */
