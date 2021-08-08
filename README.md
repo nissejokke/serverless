@@ -89,7 +89,7 @@ Kubernetes, kubectl
 
     # Create cert using openssl, enter keys in cert.yaml, described here: https://cert-manager.io/docs/configuration/ca/
     kubectl apply -f cert.yaml
-    kubectl apply -f production_issuer.yaml
+    kubectl apply -f production-issuer.yaml
 
 ## Creating and running functions
 
