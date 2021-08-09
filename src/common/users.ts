@@ -78,7 +78,7 @@ export async function loginUser(credentials: LoginUser): Promise<string> {
     const email = normalizeEmail(credentials.email);
     let user: UserRow | null = null;
     if (userId) {
-        const users = await client.query(`SELECT * FROM Users WHERE userId = ?`, [userId]);
+        const users = await client.query(`SELECT * FROM Users WHERE BINARY userId = ?`, [userId]);
         user = users[0];
     }
     else {
