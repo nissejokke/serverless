@@ -11,8 +11,8 @@ RUN apt-get update && \
     curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list && \
     apt-get update && \
-    apt-get install -y kubectl && \
-    apt-get install -y wget tar && \
+    apt-get install -y kubectl wget sendmail && \
+    sendmailconfig && \
     cd ~ && \
     wget https://github.com/digitalocean/doctl/releases/download/v1.62.0/doctl-1.62.0-linux-amd64.tar.gz && \
     tar xf ~/doctl-1.62.0-linux-amd64.tar.gz && \
